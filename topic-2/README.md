@@ -1,0 +1,3 @@
+# Topic 2: Numerical Methods for Solving Nonlinear Equations
+
+This directory contains MATLAB implementations of numerical methods for solving nonlinear equations, including the Bisection method, Newton-Raphson method, and the Secant method. It also includes NS1, NS2, Newton, Chebyshev, Chebyshev-Halley, Secant-C, Rate (tasa), fACOC methods,...
