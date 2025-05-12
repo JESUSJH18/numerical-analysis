@@ -1,0 +1,15 @@
+# Ignore MATLAB backup files
+*.asv
+*.bak
+*.m~ 
+
+# Ignore temporary files
+*.mat
+*.fig
+*.mex*
+
+# Ignore folder used for temporary files
+/Temporary/
+
+# Ignore logs or reports
+*.log
