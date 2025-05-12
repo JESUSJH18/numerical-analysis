@@ -1,4 +1,7 @@
 function tasa (incr)
+    % Visualiza cómo el comportamiento de una secuencia incr cambia con respecto a diferentes exponentes (3,2,1), comparar las tasas de cambio de los 
+    % valores de una secuencia
+   
 color=1/256*[229,85,79;255,209,0;89,203,232];
 
    k=1:length(incr)-2;
