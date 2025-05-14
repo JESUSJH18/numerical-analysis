@@ -1,5 +1,5 @@
 function ln = Legendre(n)
-% ln = legendre(n) obtiene los coeficientes del
+% ln = Legendre(n) obtiene los coeficientes del
 % polinomio de Legendre
 a=-1; b=1;
 l0=1; ln=l0; grado=1;
