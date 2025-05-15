@@ -1,6 +1,6 @@
 function [orden, E]=ordenaprox_sol(f,a,b,y0,N,m)
 % [orden]=ordenaprox_sol(f,a,b,y0,N,m)
-% aproximamos el orden a traves de la solucion, a traves de sol1 y sol2
+% aproximamos el orden de Euler a traves de la solucion, a traves de sol1 y sol2
 E=zeros(m,length(y0)); % Inicializar el vector de errores
 for k=1:m % mejor con un while con condicion de parada, m es el numero de veces que quieres duplicar N,
     %puedes ponerle m=10 o incluso mas
