@@ -1,5 +1,5 @@
-function [t, Y] = EulerSistemas(f, a, b, y0, N)
-% [t, Y] = EulerSistemas(f, t0, tf, y0, h)
+function [t, y] = EulerSistemas(f, a, b, y0, N)
+% [t, y] = EulerSistemas(f, t0, tf, y0, h)
 
 h= (b-a)/N; % Paso
 t= a:h:b; % Vector de nodos, vector fila
