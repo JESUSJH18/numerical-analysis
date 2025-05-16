@@ -1,6 +1,6 @@
 # Numerical Differentiation and Integration – Topic 5 Practices (Course 2024/2025)
 
-This repository contains implementations and exercises related to **numerical differentiation and integration**, based on the Topic 5 content of the Numerical Analysis course.
+This folder contains implementations and exercises related to **numerical differentiation and integration**, based on the Topic 5 content of the Numerical Analysis course.
 
 ## Contents
 
