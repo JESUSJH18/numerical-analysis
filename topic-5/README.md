@@ -25,5 +25,6 @@ The files implement and apply different numerical integration and extrapolation 
 - `Romberg.m` – Full Romberg integration algorithm.
 - `GaussLegendre.m` – Gauss-Legendre quadrature application.
 - `MonteCarlo.m` – Monte Carlo integration estimation.
-
+### Iterative methods description (In general, i.e. `TrapeciosIterativo.m` )
+Iterative versions of integration methods that progressively refine the partition of the interval until the approximation stabilizes within a given tolerance ``tol`, or a maximum number of iterations `maxiter` is reached. These versions are useful when the desired accuracy is not known a priori.
 
