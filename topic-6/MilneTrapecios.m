@@ -1,4 +1,4 @@
-function [t,y]= MilneTrapecios(f,a,b,h,y0,y1)
+function [t,y]= MilneTrapecios(f,a,b,y0,N)
     % [t,y]= MilneTrapecios(f,a,b,h,y0,y1)
     % Este codigo está hecho para el problema 20 de las transparencias del tema 6
     % Resuelve la ecuacion diferencial y' = f(t,y) con el metodo de Milne-Trapecios
