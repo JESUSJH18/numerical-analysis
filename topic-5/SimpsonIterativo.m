@@ -7,10 +7,10 @@ function [Integral, iter, incre] = SimpsonIterativo(f, a, b, n, tol, maxiter)
     incre = tol + 1;
     iter = 1;
     I = zeros(1, maxiter);
-    I(1) = Simpson(f, a, b, n);  % <- Error original: n se duplicaba antes de la primera iteración
+    I(1) = Simpson(f, a, b, n);  
     
     while incre > tol && iter < maxiter
-        n = 2*n;  % Ahora se duplica después de la primera evaluación
+        n = 2*n;  
         iter = iter + 1;
         I(iter) = Simpson(f, a, b, n);
         incre = abs(I(iter) - I(iter-1));
