@@ -1,0 +1,254 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{margin=3cm}
+\usepackage{anyfontsize}
+\usepackage{matlab-prettifier}
+\usepackage{amssymb,amsmath,amsfonts}
+
+\begin{document}
+\begin{titlepage}
+    \begin{center}
+        \vspace*{2cm}
+        
+        \Large
+        \textbf{TRABAJO I4} \\[0.5cm]
+        \large
+        Asignatura: Análisis Numérico \\[2cm]
+        
+        {\fontsize{40}{48}\selectfont
+        \textbf{Integración numérica de Gauss-Lobatto}} \\[3cm]
+        
+        \Large
+        Grupo 2 \\[0.5cm]
+        Curso 2024--2025 \\[3cm]
+        
+        \textbf{Autores:} \\[0.5cm]
+        de Juan Lopez, Jesus \\
+        León Martín, Jürgen \\
+        Navarro Rubio, Pablo \\
+        Sánchez Montoya, María Cruz \\[4cm]
+        
+    \end{center}
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+
+
+\section{Introducción}
+En este trabajo implementaremos y analizaremos la integración numérica por medio de la fórmula de cuadratura de Gauss-Lobatto para n nodos, que sigue la fórmula
+\[
+\int_{-1}^{1} \! f(t)  \,dt = w_1 f(-1) + w_n f(1) + \sum_{i=1}^{n-1}w_i f(t_i),
+\]
+donde $t_i$, $i=2, 3,...,n-1$, son las raíces del polinomio $p'_{n-1}(t)$, siendo $p_{n-1}(t)$ el polinomio de Legendre de grado $n-1$. Los pesos son $w_1 = w_n = \tfrac{2}{n(n-1)}$ y
+\[
+w_i=\frac{2}{n(n-1)(p_{n-1}(y_i))^2},\qquad i=2,3,...,n-1.
+\]
+Y, finalmente, compararemos los resultados obtenidos con otro método similar, Gauss-Legendre.
+
+
+\section{Construcción del programa de Gauss-Lobatto}
+El programa que queremos obtener debe tener como parámetro de entrada el número de nodos \textit{n}, de salida el vector de nodos \textit{ti} y el de pesos \textit{wi}.
+
+El orden que debemos seguir para el programa es:
+\begin{enumerate}
+\item Evaluar los posibles casos según los nodos pedidos.
+\item El vector de nodos intermedios \textit{ti}: Polinomio de Legendre de grado $n-1$, su derivada y las raíces de esta.
+\item El vector de pesos \textit{wi}.
+\item El vector de nodos completo \textit{ti} y programa final.
+\end{enumerate}
+
+\subsection{Posibles casos según los nodos pedidos}
+Hay que tener en cuenta tres posibles casos:
+\begin{enumerate}
+\item \textbf{\boldmath Si $n<2$}
+
+En este caso, no es posible calcular la cuadratura por varias razones:
+
+    \begin{itemize}
+    \item \textbf{\boldmath Si $n=1$}
+        \begin{itemize}
+        \item No hay suficientes nodos para incluir los extremos de la cuadratura $-1$ y 1.
+        \item Con un único nodo no captaría ninguna curvatura, luego no hay forma de aproximar con precisión.
+        \end{itemize}
+    \item \textbf{\boldmath Si $n<1$}
+        \begin{itemize}
+        \item No tiene sentido calcular una cuadratura sin nodos, o con nodos negativos.
+        \end{itemize}
+    \end{itemize}
+
+En este caso, el programa mostrará el mensaje \textit{"Se necesitan al menos 2 nodos para la cuadratura"}.
+
+\item \textbf{\boldmath Si $n=2$}
+
+Si se piden únicamente 2 nodos, el vector de nodos $t_i$ estará formado por los extremos de la cuadratura $-1$ y 1. Entonces, solo sería necesario calcular los pesos de los extremos $w_1$ y $w_n$ para obtener el vector de pesos $wi$.
+
+\item \textbf{\boldmath Si $n>2$}
+
+En este caso, habría que calcular los nodos intermedios por medio de encontrar las raíces de la derivada del polinomio de Legendre de grado $n-1$. Tras esto, ya tendríamos el vector de nodos $t_i$. Solo faltaría obtener los pesos de los extremos $w_1$ y $w_n$, y los intermedios $w_i$ para conseguir el vector de pesos \textit{wi}. 
+
+\end{enumerate} 
+
+\subsection{El vector de nodos intermedios \textit{ti}}
+\subsubsection{\boldmath Polinomio de Legendre de orden $n-1$}
+En este primer paso, usamos un código auxiliar \textit{LegendreT.m} que devuelve los coeficientes truncados del polinomio de Legendre del orden que le introduzcamos, en este caso, $n-1$. Estos coeficientes (dispuestos de forma descendente) los guardamos en el vector \textit{cl}.
+%Por qué usamos Legendre truncado?
+
+\textit{\\Código:}
+
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+cl=LegendreT(n-1);
+\end{lstlisting}
+
+\subsubsection{\boldmath Derivada del polinomio de Legendre de orden $n-1$}
+Aplicamos la regla básica de derivación de polinomios:
+\[
+\frac{d}{dx}(a_k x^k)=k a_k x^{k-1}
+\]
+
+Multiplicamos componente a componente el vector de coeficientes \textit{cl} por otro vector con los grados de cada término del polinomio, en orden descendente. Así, cada coeficiente se multiplica por su grado, obteniendo los coeficientes de la derivada, que guardamos en el vector \textit{ci}.
+
+Sin embargo, la derivada del polinomio de grado $n-1$ tiene grado $n-2$, por lo que eliminamos el último término correspondiente al grado 0, cuya derivada es 0.
+
+\textit{\\Código:}
+
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+ci=((n-1):-1:0).*cl;
+ci=ci(:,(1:n-1));
+\end{lstlisting}
+
+\subsubsection{\boldmath Raíces de la derivada del polinomio de Legendre de orden $n-1$}
+Para calcular los ceros de la derivada del polimonio de Legendre, usamos el comando \textit{roots} que devuelve las raíces de un polinomio en forma de vector columna, al que llamamos \textit{ti}, obteniendo así los nodos intermedios. Como queremos trabajar con vectores fila, trasponemos \textit{ti}. Además, lo ordenamos de forma descendente con el comando \textit{sort}. 
+
+\textit{\\Código:}
+
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+ti=roots(ci);
+ti=ti';
+ti=sort(ti,"descend");
+\end{lstlisting}
+
+\subsection{El vector de pesos \textit{wi}}
+En primer lugar, calculamos los pesos de los extremos $w_1$ y $w_n$, que asignamos a la variable \textit{wn}, y definimos el vector, por ahora vacío, \textit{wi}.
+
+Luego, calculamos mediante un bucle \textit{for} los pesos intermedios $w_i$, que se pueden expresar como
+\[
+w_i=w_n\frac{1}{(p_{n-1}(y_i))^2},\qquad i=2,3,...,n-1.
+\]
+Y los vamos añadiendo al vector \textit{wi}, obteniendo así el vector de pesos intermedios.
+
+Finalmente, completamos el vector \textit{wi} agregándole los pesos de los extremos \textit{wn}.
+
+\textit{\\Código:}
+
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+for i=1:(n-2)
+    pi=polyval(cl,ti(i));
+    w=wn/(pi^2);
+    wi=[wi w];
+end
+wi=[wn wi wn];
+\end{lstlisting}
+
+\subsection{El vector de nodos completo \textit{ti} y programa final}
+Solo falta añadir los nodos de los extremos $-1$ y 1 al vector \textit{ti}. Con esto, ya tenemos el vector de nodos \textit{ti} completo.
+
+\textit{\\Código:}
+
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+ti=[1 ti -1];
+\end{lstlisting}
+
+Finalmente, construimos el programa final:
+
+\begin{lstlisting}[frame=single, numbers=left, style=Matlab-Pyglike]
+function [ti,wi] = GaussLobatto(n)
+%[ti,wi] = GaussLobatto(n)
+wi=[];
+wn=2/(n*(n-1));
+if n>2
+    cl=LegendreT(n-1);
+    ci=((n-1):-1:0).*cl;
+    ci=ci(:,(1:n-1));
+    ti=roots(ci);
+    ti=ti';
+    ti=sort(ti,"descend");
+    for i=1:(n-2)
+        pi=polyval(cl,ti(i));
+        w=wn/(pi^2);
+        wi=[wi w];
+    end
+    wi=[wn wi wn];
+    ti=[1 ti -1];
+else 
+    if n==2
+        wi=[wn wn];
+        ti=[1 -1];
+    else
+    disp("Se necesitan al menos 2 nodos para la cuadratura")
+    end
+end
+end
+\end{lstlisting}
+\newpage
+\section{Pesos y nodos de la cuadratura de Gauss-Lobatto para 8 y 9 nodos.}
+\begin{itemize}
+\item \textbf{8 nodos}
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> [t8,w8] = GaussLobatto(8)
+
+t8 =
+
+    1.0000    0.8717    0.5917    0.2093   -0.2093   -0.5917   -0.8717   -1.0000
+
+
+w8 =
+
+    0.0357    0.2107    0.3411    0.4125    0.4125    0.3411    0.2107    0.0357
+\end{lstlisting}
+
+%Comentar el resultado
+
+\item \textbf{9 nodos}
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> [t9,w9] = GaussLobatto(9)
+
+t9 =
+
+    1.0000    0.8998    0.6772    0.3631         0   -0.3631   -0.6772   -0.8998   -1.0000
+
+
+w9 =
+
+    0.0278    0.1655    0.2745    0.3464    0.3715    0.3464    0.2745    0.1655    0.0278
+\end{lstlisting}
+\end{itemize}
+
+
+\section{Implementación del programa de integración mediante Gauss-Lobatto}
+%Comentar
+
+
+\section{Aproximación mediante Gauss-Lobatto con 9 nodos de algunas integrales}
+\begin{itemize}
+    \item $\displaystyle I_1=\int_{0}^{\pi/3} \! \frac{1}{1-\sin(x)}  \,dx$
+
+    \item $\displaystyle I_2=\int_{0}^{\pi} \! \frac{\sin(x)}{x^{3/2}}  \,dx$
+
+    \item $\displaystyle I_3=\int_{0}^{1} \! \frac{e^x}{x^2}  \,dx$
+\end{itemize}
+
+\section{Comparación de resultados con Gauss-Legendre}
+
+\section{Bibliografía}
+\begin{itemize}
+    \item Análisis Numérico (Burden, Richard L.)
+    \item Análisis Numérico con Aplicaciones (Gerald, Curtis F.)
+    \item Problemas Resueltos de Métodos Numéricos (Torregrosa Sánchez, Juan Ramón $\vert$ Hueso Pagoaga, José Luis $\vert$ Cordero Barbero, Alicia $\vert$ Martínez Molada, Eulalia)
+\end{itemize}
+\end{document}
+
