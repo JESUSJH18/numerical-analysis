@@ -26,7 +26,7 @@
         Curso 2024--2025 \\[3cm]
         
         \textbf{Autores:} \\[0.5cm]
-        de Juan Lopez, Jesus \\
+        de Juan Lopez, Jesús \\
         León Martín, Jürgen \\
         Navarro Rubio, Pablo \\
         Sánchez Montoya, María Cruz \\[4cm]
@@ -52,7 +52,7 @@ Y, finalmente, compararemos los resultados obtenidos con otro método similar, G
 
 
 \section{Construcción del programa de Gauss-Lobatto}
-El programa que queremos obtener debe tener como parámetro de entrada el número de nodos \textit{n}, de salida el vector de nodos \textit{ti} y el de pesos \textit{wi}.
+El programa que queremos obtener debe tener como parámetro de entrada el número de nodos \textit{n}, y de salida el vector de nodos \textit{ti} y el de pesos \textit{wi}.
 
 El orden que debemos seguir para el programa es:
 \begin{enumerate}
@@ -194,8 +194,125 @@ else
 end
 end
 \end{lstlisting}
+
 \newpage
 \section{Pesos y nodos de la cuadratura de Gauss-Lobatto para 8 y 9 nodos.}
+
+\subsection{Simetría de los nodos respecto al 0}
+
+\subsubsection{Paridad e imparidad de los polinomios de Legendre}
+
+Queremos probar que el polinomio de Legendre $l_i$ es función par si $i=2k$ e impar si $i=2k+1$, $k\in\mathbb{N}\cup\{0\}$ por el método de inducción. Podemos ver que para los casos $i=0, 1, 2, 3$ se cumple:
+\[l_0=1\quad;\quad l_1=x\quad;\quad l_2=x^2-\frac{1}{3}\quad;\quad l_3=x^3-\frac{3}{5}x \]
+
+Supongamos que $l_i$ es par y $l_{i+1}$ impar y probemos para $l_{i+2}$ y $l_{i+3}$ :\\
+
+a) Sabemos que
+\[l_{i+2}(x)=(x-b_{i+2})\cdot l_{i+1}(x)-c_{i+2}\cdot l_i(x)\quad, \quad\alpha_{i+1}=\int_{-1}^1l_{i+1}^2(x)dx>0\]
+
+Por lo tanto\[b_{i+2}=\frac{1}{\alpha_{i+1}} \int_{-1}^1\underbrace{x\cdot l_{i+1}^2(x)}_{impar}dx=0\Rightarrow l_{i+2}=\underbrace{x\cdot l_{i+1}(x)}_{par}-\underbrace{c_{i+2}\cdot l_i(x)}_{par}\Rightarrow l_{i+2}(x)\text{ es par.}\]\\
+
+b) Sabemos que
+\[l_{i+3}(x)=(x-b_{i+3})\cdot l_{i+2}(x)-c_{i+3}\cdot l_{i+1}(x)\quad,\quad\alpha_{i+2}=\int_{-1}^1l_{i+2}^2(x)dx>0\] 
+
+Por lo tanto \[b_{i+3}=\frac{1}{\alpha_{i+2}}\int_{-1}^1\underbrace{x\cdot l_{i+2}^2(x)}_{impar}dx=0
+\Rightarrow b_{i+3}=\underbrace{x\cdot l_{i+2}(x)}_{impar}-\underbrace{c_{i+3}\cdot l_{i+1}(x)}_{impar}\Rightarrow l_{i+3}(x)\text{ es par.}\]
+
+Este resultado también se extrapola a los polinomios de Legendre truncados utilizados en el trabajo, dado que son simplemente un escalado de los polinomios de Legendre normales.
+
+\subsubsection{Simetría de las raíces de funciones pares e impares}
+
+Queremos probar que tanto para las funciones de grado par como las de grado impar, el conjunto de raíces debe ser simétrico entorno al cero.
+\begin{enumerate}
+\item \textbf{Caso par:}
+
+Supongamos que existe una raíz $x_i:f(x_i)=0$. Al ser $f(x)$ una función par, se cumple que $f(-x_i)=f(x_i)=0$. Por lo tanto, se cumple que para cada raíz de la función par, su elemento opuesto también es raíz.
+
+\item \textbf{Caso impar:}
+
+Partamos de la hipótesis planteada en el caso anterior. Al tratarse de una función impar, se cumple que $-f(x_i)=f(x_i)=0\Rightarrow f(-x_i)=0$. Ocurre lo mismo que en el caso par.
+\end{enumerate}
+\subsubsection{\boldmath Simetría de las raices de $\tilde l_i(x)'$}
+
+Utilizando el resultado del apartado 3.1.1, vemos que las derivadas de los polinomios de Legendre truncados también deben ser o pares o impares, dado que al derivar el polinomio se invierte la paridad. Por el resultado del apartado 3.1.2 el conjunto de raíces de $\tilde l_i(x)'$ (que corresponden con los nodos de Gauss-Lobatto) debe ser simétrico entorno al 0.
+
+\subsection{Suma de los pesos}
+
+Ambos resultados tienen sentido pues
+\begin{itemize}
+\item Los vectores de nodos, \textit{t8} y \textit{t9}, son simétricos respecto del 0. %completar
+\item Los vectores de pesos, \textit{w8} y \textit{w9}, son simétricos respecto del 0 y suman 2. 
+\noindent Para demostrar que la suma de los pesos es siempre 2, consideramos el sistema matricial asociado a la cuadratura de Gauss-Lobatto con \( n \) nodos. Este garantiza la exactitud para polinomios de grado \( \leq 2n-3 \):
+
+\[
+\begin{cases}
+    \sum_{i=1}^n w_i \cdot 1 = \int_{-1}^1 1 \, dx = 2, & \text{(exactitud para \( f(x) = 1 \))} \\
+    \sum_{i=1}^n w_i x_i = \int_{-1}^1 x \, dx = 0, & \text{(exactitud para \( f(x) = x \))} \\
+    \quad \vdots & \\
+    \sum_{i=1}^n w_i x_i^{2n-3} = \int_{-1}^1 x^{2n-3} \, dx. & \text{(exactitud para \( f(x) = x^{2n-3} \))}
+\end{cases}
+\]
+
+\noindent En forma matricial, el sistema se escribe como:
+\[
+\underbrace{
+\begin{bmatrix}
+1 & 1 & \cdots & 1 \\
+x_1 & x_2 & \cdots & x_n \\
+x_1^2 & x_2^2 & \cdots & x_n^2 \\
+\vdots & \vdots & \ddots & \vdots \\
+x_1^{2n-3} & x_2^{2n-3} & \cdots & x_n^{2n-3}
+\end{bmatrix}
+}_{\text{Matriz de Vandermonde traspuesta}}
+\begin{bmatrix}
+w_1 \\
+w_2 \\
+\vdots \\
+w_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+2 \\
+0 \\
+\vdots \\
+\int_{-1}^1 x^{2n-3} dx
+\end{bmatrix}.
+\]
+
+\noindent La primera ecuación del sistema:
+\[
+\sum_{i=1}^n w_i = 2,
+\]
+es una condición necesaria para garantizar la exactitud en funciones constantes. Los pesos \( w_1, \ldots, w_n \) se calculan resolviendo este sistema, asegurando que la suma siempre sea 2 independientemente de \( n \). Por ejemplo, para \( n=3 \):
+
+\[
+\begin{cases}
+w_1 + w_2 + w_3 = 2, \\
+w_1(-1) + w_2 x_2 + w_3(1) = 0, \\
+w_1(1) + w_2 x_2^2 + w_3(1) = \frac{2}{3}.
+\end{cases}
+\]
+
+\noindent La solución \( w_1 = w_3 = \frac{1}{3} \), \( w_2 = \frac{4}{3} \), y \( x_2 = 0 \), cumple \( \sum w_i = 2 \), validando la propiedad general.
+
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> sum(w8)
+
+ans =
+
+    2.0000
+\end{lstlisting}
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> sum(w9)
+
+ans =
+
+    2.0000
+\end{lstlisting}
+\end{itemize}
+
+\subsection{Gauss-Lobatto para 8 y 9 nodos}
+
 \begin{itemize}
 \item \textbf{8 nodos}
 \begin{lstlisting}[frame=single, style=Matlab-Pyglike]
@@ -211,8 +328,6 @@ w8 =
     0.0357    0.2107    0.3411    0.4125    0.4125    0.3411    0.2107    0.0357
 \end{lstlisting}
 
-%Comentar el resultado
-
 \item \textbf{9 nodos}
 \begin{lstlisting}[frame=single, style=Matlab-Pyglike]
 >> [t9,w9] = GaussLobatto(9)
@@ -226,24 +341,401 @@ w9 =
 
     0.0278    0.1655    0.2745    0.3464    0.3715    0.3464    0.2745    0.1655    0.0278
 \end{lstlisting}
+
 \end{itemize}
+Ambos resultados tienen sentido pues
+\begin{itemize}
+\item Los vectores de nodos, \textit{t8} y \textit{t9}, son simétricos respecto del 0. %completar
+\item Los vectores de pesos, \textit{w8} y \textit{w9}, son simétricos respecto del 0 y suman 2. %completar
 
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> sum(w8)
 
+ans =
+
+    2.0000
+\end{lstlisting}
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> sum(w9)
+
+ans =
+
+    2.0000
+\end{lstlisting}
+\end{itemize}
 \section{Implementación del programa de integración mediante Gauss-Lobatto}
-%Comentar
 
+\subsection{Gauss-Lobatto con extremos -1 y 1}
+Queremos obtener un programa que tenga como parámetros de entrada la función \textit{f} a integrar, y el número de nodos \textit{n}, y de salida, el valor de la integral \textit{I}.
+
+Primero, obtenemos el vector de nodos \textit{ti} y el de pesos \textit{wi} con el programa \textit{GaussLobatto.m} construido anteriormente. Después, con un bucle \textit{for} guardamos en el vector \textit{fi} los valores de la función evaluada en los nodos. Finalmente, asignamos a el vector \textit{s} el producto, componente a componente, del vector \textit{fi} y \textit{wi} y, usamos el comando \textit{sum} para realizar el sumatorio, cuyo valor guardamos en la variable \textit{I}.
+\begin{lstlisting}[frame=single, numbers=left, style=Matlab-Pyglike]
+function I = integraGaussLobatto(f,n)
+%I = integraGaussLobatto(f,n)
+[ti,wi]=GaussLobatto(n);
+fi=[];
+for i=1:n
+    fi=[fi f(ti(i))];
+end
+s=fi.*wi;
+I=sum(s);
+end
+\end{lstlisting}
+
+Este código funciona para integrales no impropias con extremos de integración $-1$ y 1.
+
+\subsection{Gauss-Lobatto con extremos a y b}
+Este programa tiene los mismos parámetros de entrada que el anterior, además de los extremos de integración \textit{a} y \textit{b}, y el mismo parámetro de salida.
+
+La mayor parte del procedimiento es igual al apartado anterior, solo hay que realizar el cambio de variable
+\[x=\frac{b-a}{2}t-\frac{b+a}{2},\quad dx=\frac{b-a}{2}dt,\]
+
+por lo que podemos aproximar
+
+\[\displaystyle I=\int_{a}^{b} \! f(x)  \,dx = \frac{b-a}{2} \sum_{i=1}^{n}w_i f \left(\frac{b-a}{2}t_i + \frac{b+a}{2} \right)\]
+\\
+\begin{lstlisting}[frame=single, numbers=left, style=Matlab-Pyglike]
+function I = integraGaussLobattoAB(a,b,f,n)
+%I = integraGaussLobattoAB(f,n)
+[ti,wi]=GaussLobatto(n);
+ba=ones(1,n)*(b+a)/2;
+ti=(ti*(b-a)/2)+ba;
+fi=[];
+for i=1:n
+    fi=[fi f(ti(i))];
+end
+s=fi.*wi;
+I=sum(s)*(b-a)/2;
+end
+\end{lstlisting}
+
+\subsection{Gauss-Lobatto con extremos a y b para integrales impropias}
+
+\subsubsection{Integral impropia como suma infinita de integrales propias}
+Con estos dos programas, buscamos obtener la solución de integrales impropias mediante el método Gauss-Lobatto. Para ello,  podemos considerar una sucesión decreciente convergente a cero y aproximar el valor de la integral como suma
+ finita de integrales propias.
+ 
+A continuación, se probará que este método para sumas infinitas en efecto converge al valor de la integral impropia original:
+
+Consideremos una sucesión $\{s_n\}_{n=1}^n$: $a+s_1<b$ $\wedge$ \stackrel{*} $s_k > s_{k-1} \forall k$ \wedge $\lim_{n \rightarrow \infty} s_n = 0$
+y la siguiente suma finita de integrales propias:
+$$
+\int_{a + s_n}^b f(x) \, dx + \int_{a + s_{n-1}}^{a + s_n} f(x) \, dx + \cdots + \int_{a + s_1}^{a + s_2} f(x) \, dx \stackrel{*}= \int_a^b f(x) \, dx \quad $$
+$$\Rightarrow \int_{a + s_1}^b f(x) \, dx + \int_{a + s_2}^{a + s_1} f(x) \, dx + \cdots = \lim_{n \rightarrow \infty} \int_{a + s_n}^b f(x) \, dx = \int_{a + 0}^b f(x) \, dx = \int_a^b f(x) \, dx$$
+
+\subsubsection{Implementación del programa}
+
+Haciendo uso de la técnica numérica del último apartado, queremos hacer una función para la resolución de una integral impropia con singularidad en el extremo inferior.
+
+Se considera como sucesión decreciente $\{2^{-i}\}_{i=j}^{j+k-1}$ donde la k es un valor introducido por el usuario para optimizar la precisión de la solución (reflejada en la cantidad de sumas de integrales), y la j es un valor a determinar. Se toma la sucesion desde $j\geq 1$, dado a la posibilidad de que $a+1/2>b$ que estropearía la aproximación. Sin embargo, dado que se parte de una sucesión decreciente convergente a 0, se puede asegurar que $\exists j:a+2^{-j}<b$. Desde la línea \texttt{j=1;} hasta el \texttt{end} del bucle \texttt{while}, se busca la $j$ que cumpla la condición previamente mencionada. Desde el bucle \texttt{for} hasta el último \texttt{end} se implementa la suma finita de Integrales propias aproximadas por \texttt{integraGaussLobatto}.
+
+ 
+\begin{lstlisting}[frame=single, numbers=left, style=Matlab-Pyglike]
+function I = integraGaussLobattoImpropio(a,b,f,n,k)
+%I = IntegraGaussLobattoImpropio(a,b,f,n,k)
+I=0;
+j=1;
+a_end=a+1/(2^j);
+while a_end>b
+    j=j+1;
+    a_end=a+1/(2^j);
+end
+for i=j:j+k-1
+    ai=1/(2^i);
+    I=I+integraGaussLobattoAB(a+ai/2,a+ai,f,n);
+end
+I=I+integraGaussLobattoAB(a_end,b,f,n);
+end
+\end{lstlisting}
 
 \section{Aproximación mediante Gauss-Lobatto con 9 nodos de algunas integrales}
+Para comprobar el resultado de las siguientes integrales usaremos el comando \textit{quadgk}
+
 \begin{itemize}
     \item $\displaystyle I_1=\int_{0}^{\pi/3} \! \frac{1}{1-\sin(x)}  \,dx$
+    \\
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> f=@(x) 1./(1-sin(x)); a=0; b=pi/3; n=9;
+>> I1 = integraGaussLobattoAB(a,b,f,n)
+
+I1 =
+
+   2.732050857019763
+
+>> I = quadgk(f,a,b)
+
+I =
+
+   2.732050807568876
+
+>> Error = abs(I-I1)
+
+Error =
+
+     4.945088694086053e-08
+\end{lstlisting}
+
+El error absoluto entre ambos valores es de \(4.945088694086053 \times 10^{-8} \), lo que indica una excelente precisión. Esto se debe a que la función \( f(x) = \frac{1}{1-\sin(x)} \) es suave y tiene un buen comportamiento en el intervalo \( [0, \pi/3] \), permitiendo que la cuadratura de Gauss-Lobatto proporcione una aproximación muy cercana al valor real.
 
     \item $\displaystyle I_2=\int_{0}^{\pi} \! \frac{\sin(x)}{x^{3/2}}  \,dx$
+    \\
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> f=@(x) sin(x)./x.^(3/2); a=0; b=pi; n=9; k=100;
+>> I2 = integraGaussLobattoImpropio(a,b,f,n,k)
+
+I2 =
+
+   2.651469905786794
+
+>> I = quadgk (f ,a , b )
+
+I =
+
+   2.651469253040811
+
+>> Error = abs(I - I2)
+
+Error =
+
+     6.527459821548121e-07
+\end{lstlisting}
+
+Para \( I_2 \), se utilizó la función \texttt{integraGaussLobattoImpropio}  debido a la singularidad de la función \( f(x) = \frac{\sin(x)}{x^{3/2}} \) en \( x = 0 \).  El error absoluto es de \( 6.527459821548121 \times 10^{-7} \), lo que refleja una buena aproximación, aunque el error es mayor que en \( I_1 \). Esto se debe a la singularidad en \( x = 0 \), que introduce dificultades numéricas.
 
     \item $\displaystyle I_3=\int_{0}^{1} \! \frac{e^x}{x^2}  \,dx$
+\\
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> f=@(x) exp(x)./x.^2; a=0; b=1; n=9; k=1000;
+>> I3 = integraGaussLobattoImpropio(a,b,f,n,k)
+
+I3 =
+
+   Inf
+
+>> I = quadgk (f ,a , b )
+Warning: Infinite or Not-a-Number value encountered. 
+> In quadgk>vadapt (line 281)
+In quadgk (line 184) 
+
+I =
+
+   Inf
+\end{lstlisting}
+
+En el caso de \( I_3 \), tanto la cuadratura de Gauss-Lobatto como \textit{quadgk} devuelven un valor de \( \infty \). Esto indica que la integral diverge, lo cual es esperado debido a la singularidad de la función \( f(x) = \frac{e^x}{x^2} \) en \( x = 0 \). La función crece de manera extremadamente rápida cerca de \( x = 0 \), y la integral no converge en el intervalo \( [0, 1] \). Este resultado confirma que \( I_3 \) es una integral impropia que no tiene un valor finito.
+    
 \end{itemize}
 
 \section{Comparación de resultados con Gauss-Legendre}
+\begin{itemize}
 
+    \item $\displaystyle I_1=\int_{0}^{\pi/3} \! \frac{1}{1-\sin(x)}  \,dx$
+    \\
+    \begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> f=@(x) 1./(1-sin(x)); a=0+1e-3; b=pi/3-1e-3; n=9;
+>> I1Lob= integraGaussLobattoAB(a,b,f,n)
+
+I1Lob =
+
+   2.723600154858061
+
+>> I1Leg= gaussLegendre(f,a,b,n)
+
+I1Leg =
+
+   2.723600103938956
+
+>> Diferencia = abs(I1Lob - I1Leg)
+
+Diferencia =
+
+     5.091910448840054e-08
+
+>> I = quadgk ( f ,a , b )
+
+I =
+
+   2.723600107261762
+
+>> Error1Lob = abs(I - I1Lob)
+
+Error1Lob =
+
+     4.759629890216388e-08
+
+>> Error1Leg= abs(I - I1Leg)
+
+Error1Leg =
+
+     3.322805586236655e-09
+
+    \end{lstlisting}
+
+En el cálculo de \( I_1 \), tanto Gauss-Legendre como Gauss-Lobatto ) con 9 nodos en el intervalo ajustado \( [0 + 10^{-3}, \pi/3 - 10^{-3}] \) ofrecen resultados precisos. Gauss-Legendre arroja un valor de \( 2.723600103938956 \) con un error absoluto de \( 3.322805586236655 \times 10^{-9} \), mientras que Gauss-Lobatto da \( 2.723600154858061 \) con un error de \( 4.759629890216388 \times 10^{-8} \), ambos respecto al valor de referencia de \textit{quadgk} (\( 2.723600107261762 \)). La diferencia entre ambos métodos es de \( 5.091910448840054 \times 10^{-8} \). Gauss-Legendre es más preciso en este caso, ya que la función \( f(x) = \frac{1}{1-\sin(x)} \) es suave.
+\\
+    \item $\displaystyle I_2=\int_{0}^{\pi} \! \frac{\sin(x)}{x^{3/2}}  \,dx$
+    \\
+    \begin{itemize}
+    
+    \item Con \textit{integraGaussLobattoAB} en el intervalo $[0+10^{-3},\pi-10^{-3}]$
+
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> f=@(x) sin(x)./x.^(3/2); a=0+1e-3; b=pi-1e-3; n=9;
+>> I2Leg=gaussLegendre(f, a, b, n)
+
+I2Leg =
+
+   2.480811316956006
+
+>> I2Lob=integraGaussLobattoAB(a,b,f,n)
+
+I2Lob =
+
+   3.564891079137420
+
+>> I=quadgk(f,a,b)
+
+I =
+
+   2.588223612123681
+
+>> Error2Leg=abs(I - I2Leg)
+
+Error2Leg =
+
+   0.107412295167674
+
+>> Error2Lob=abs(I - I2Lob)
+
+Error2Lob =
+
+   0.976667467013740
+   
+>> Diferencia = abs(I2Lob - I2Leg)
+
+Diferencia =
+
+   1.084079762181414
+\end{lstlisting}
+
+En este caso, para \( I_2 \), se comparan Gauss-Legendre y Gauss-Lobatto  en el intervalo ajustado \( [10^{-3}, \pi - 10^{-3}] \). Gauss-Legendre da un valor de \( 2.480811316956006 \) con un error absoluto de \( 0.107412295167674 \), mientras que Gauss-Lobatto arroja \( 3.564891079137420 \) con un error de \( 0.976667467013740 \), ambos respecto al valor de referencia de \textit{quadgk} (\( 2.588223612123681 )\). La diferencia entre ambos métodos es de \( 1.084079762181414 \). Ambos métodos tienen errores significativos debido a la singularidad de \( f(x) = \frac{\sin(x)}{x^{3/2}} \) en \( x = 0 \), que afecta la precisión incluso en un intervalo ajustado. Gauss-Legendre tiene un error menor que Gauss-Lobatto, pero ambos son imprecisos en este contexto.
+    
+    \item Con \textit{integraGaussLobattoImpropio}
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> f=@(x) sin(x)./x.^(3/2); a=0+1e-3; b=pi-1e-3; n=9;
+>> I2Leg=gaussLegendre(f, a,b, n)
+
+I2Leg =
+
+   2.480811316956006
+
+>> I2Lob = integraGaussLobattoImpropio (0 ,pi ,f ,n , 100)
+
+I2Lob =
+
+2.651469905786794
+
+>> I = quadgk(f ,a , b )
+
+I =
+
+   2.588223612123681
+
+>> Error2Leg=abs(I-I2Leg)
+
+Error2Leg =
+
+   0.107412295167674
+
+>> Error2Lob = abs( I - I2Lob )
+
+Error2Lob =
+
+6.527459821548121e-07
+\end{lstlisting}
+\\
+Al usar \texttt{integraGaussLobattoImpropio} para \( I_2 \) con \( k = 100 \) en el intervalo original \( [0, \pi] \), Gauss-Lobatto mejora significativamente, dando un valor de \( 2.651469905786794 \) con un error de \( 6.527459821548121 \times 10^{-7} \), mucho menor que el error de Gauss-Legendre (\( 0.107412295167674 \)) en el intervalo ajustado \( [10^{-3}, \pi - 10^{-3}] \). Esto demuestra que \texttt{integraGaussLobattoImpropio} maneja mejor la singularidad en \( x = 0 \), ya que está diseñado para integrales impropias, mientras que Gauss-Legendre y \texttt{integraGaussLobattoAB} no están optimizados para este tipo de problemas.
+\end{itemize}
+\\
+
+\item $\displaystyle I_3=\int_{0}^{1} \! \frac{e^x}{x^2}  \,dx$
+\\
+\begin{itemize}
+    \item Con \textit{integraGaussLobattoAB} en el intervalo $[0+10^{-3},1-10^{-3}]$
+    \\
+    \begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> f=@(x) exp(x)./x.^2; a=0+1e-3; b=1-1e-3; n=9;
+>> I3Leg=gaussLegendre(f,a,b,n)
+
+I3Leg =
+
+     1.676112081728000e+02
+
+>> I3Lob=integraGaussLobattoAB(a,b,f,n)
+
+I3Lob =
+
+     1.391952022433983e+04
+
+>> Diferencia= abs(I3Lob - I3Leg)
+
+Diferencia =
+
+     1.375190901616703e+04
+
+>> I = quadgk(f,a,b)
+
+I =
+
+     1.006504155876315e+03
+
+>> Error3Leg=abs(I-I3Leg)
+
+Error3Leg =
+
+     8.388929477035150e+02
+
+>> Error3Lob=abs(I-I3Lob)
+
+Error3Lob =
+
+     1.291301606846351e+04
+    \end{lstlisting}
+    \\
+Para \( I_3 \), en el intervalo ajustado \( [10^{-3}, 1 - 10^{-3}] \), se obtienen resultados muy imprecisos. Gauss-Legendre da \( 167.6112081728 \) con un error de \( 838.892947703515 \), mientras que Gauss-Lobatto arroja \( 13919.52022433983 \) con un error de \( 12913.01606846351 \), ambos respecto al valor de \textit{quadgk} (\( 1006.504155876315 \)). La diferencia entre ambos métodos es de \( 13751.90901616703 \). La función \( f(x) = \frac{e^x}{x^2} \) tiene una singularidad fuerte en \( x = 0 \), y aunque el intervalo está ajustado, ambos métodos fallan en capturar el comportamiento de la integral, siendo Gauss-Lobatto particularmente impreciso.    
+    \item Con \textit{integraGaussLobattoImpropio}
+    \\
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> f=@(x) exp(x)./x.^2; a=0+1e-3; b=1-1e-3; n=9;
+>> I3Leg=gaussLegendre(f, a,b, n)
+
+I3Leg =
+
+     1.676112081728000e+02
+
+>> I3 = integraGaussLobattoImpropio(0,1,f,n,100)
+
+I3 =
+
+   Inf
+
+>> I = quadgk(f ,a , b )
+
+I =
+
+     1.006504155876315e+03
+
+>> Error3Leg=abs(I-I3Leg)
+
+Error3Leg =
+
+     8.388929477035150e+02
+\end{lstlisting}
+    \\
+Al emplear \texttt{integraGaussLobattoImpropio} con \( k = 100 \) en el intervalo original \( [0, 1] \), Gauss-Lobatto identifica correctamente que la integral diverge (\( \text{Inf} \)), lo cual es coherente, ya que \( f(x) = \frac{e^x}{x^2} \) crece rápidamente cerca de \( x = 0 \). En contraste, Gauss-Legendre en el intervalo ajustado subestima la integral (\( 167.6112081728 \), error de \( 838.892947703515 \)), mostrando su limitación para integrales con singularidades fuertes, mientras que \\ \texttt{integraGaussLobattoImpropio} captura adecuadamente la naturaleza divergente de \( I_3 \).
+
+\end{itemize}
+\end{itemize}
 \section{Bibliografía}
 \begin{itemize}
     \item Análisis Numérico (Burden, Richard L.)
@@ -251,4 +743,3 @@ w9 =
     \item Problemas Resueltos de Métodos Numéricos (Torregrosa Sánchez, Juan Ramón $\vert$ Hueso Pagoaga, José Luis $\vert$ Cordero Barbero, Alicia $\vert$ Martínez Molada, Eulalia)
 \end{itemize}
 \end{document}
-
