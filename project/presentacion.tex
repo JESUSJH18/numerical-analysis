@@ -42,12 +42,11 @@
 \author[Jesús de Juan, Jürgen León, Pablo Navarro, María C. Sánchez]{Jesús de Juan López \\
         Jürgen León Martín \\
         Pablo Navarro Rubio \\
-        María Cruz Sánchez Montoya\\} % Your name
+        María Cruz Sánchez Montoya} % Your name
 \institute[UPV] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
-{
-  Universidad Politécnica de Valencia \\ % Your institution for the title page
+{ Trabajo I4, Grupo 2 \\ % Your institution for the title page
 }
-\date{Trabajo I4, Grupo 2} % Date, can be changed to a custom date
+\date{Universidad Politécnica de Valencia} % Date, can be changed to a custom date
 
 
 \begin{document}
@@ -61,7 +60,7 @@
 % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, 
 % these will automatically be printed on this slide as an overview of your presentation
 \begin{frame}
-  \frametitle{Contenidos} % Table of contents slide, comment this block out to remove it
+  \frametitle{Índice} % Table of contents slide, comment this block out to remove it
   \tableofcontents
 \end{frame}
 
@@ -72,44 +71,78 @@
 %----------------------------------------------------------------------------------------
 
 %------------------------------------------------
-\section{First Section} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
+\section{Introducción} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
 %------------------------------------------------
 
-\subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
+%\subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
 
 \begin{frame}
-\frametitle{Paragraphs of Text}
-Sed iaculis dapibus gravida. Morbi sed tortor erat, nec interdum arcu. Sed id lorem lectus. Quisque viverra augue id sem ornare non aliquam nibh tristique. Aenean in ligula nisl. Nulla sed tellus ipsum. Donec vestibulum ligula non lorem vulputate fermentum accumsan neque mollis.\\~\\
+\frametitle{Introducción}
+Fórmula de cuadratura de \textcolor{blue}{Gauss-Lobatto} para \textcolor{blue}{n} nodos:
+\[
+\int_{-1}^{1} \! f(t)  \,dt = w_1 f(-1) + w_n f(1) + \sum_{i=1}^{n-1}w_i f(t_i),
+\]
+\\~\\
 
-Sed diam enim, sagittis nec condimentum sit amet, ullamcorper sit amet libero. Aliquam vel dui orci, a porta odio. Nullam id suscipit ipsum. Aenean lobortis commodo sem, ut commodo leo gravida vitae. Pellentesque vehicula ante iaculis arcu pretium rutrum eget sit amet purus. Integer ornare nulla quis neque ultrices lobortis. Vestibulum ultrices tincidunt libero, quis commodo erat ullamcorper id.
+donde $t_i$, $i=2, 3,...,n-1$, son las raíces del polinomio $p'_{n-1}(t)$, siendo $p_{n-1}(t)$ el polinomio de Legendre de grado $n-1$. Los \textcolor{blue}{pesos} son $w_1 = w_n = \tfrac{2}{n(n-1)}$ y
+\[
+w_i=\frac{2}{n(n-1)(p_{n-1}(t_i))^2},\qquad i=2,3,...,n-1.
+\].
 \end{frame}
 
 %------------------------------------------------
-
+\section{Construcción del programa de Gauss-Lobatto}
 \begin{frame}
-\frametitle{Bullet Points}
+\frametitle{Construcción del programa de Gauss-Lobatto}
+
+\begin{table}
+    \centering
+    \begin{tabular}{cc}
+    \toprule
+   \textbf{ Parámetros de entrada} & \textbf{Parámetros de salida} \\
+   \midrule
+    Número de nodos \textcolor{blue}{n} & Vector de nodos \textcolor{blue}{ti}\\
+         & Vector de pesos \textcolor{blue}{wi}\\
+    \bottomrule
+    \end{tabular}
+
+    \label{tab:my_label}
+\end{table}
+\begin{enumerate}
+\item Evaluar los \textcolor{blue}{posibles casos} según los nodos pedidos.
+\item El vector de nodos intermedios \textcolor{blue}{ti}: Polinomio de Legendre de grado $n-1$, su derivada y las raíces de esta.
+\item El vector de pesos \textcolor{blue}{wi}.
+\item El vector de nodos completo \textcolor{blue}{ti} y programa final.
+\end{enumerate}
+\end{frame}
+
+%------------------------------------------------
+\subsection{Posibles casos según los nodos pedidos}
+\begin{frame}
+\frametitle{Posibles casos según los nodos pedidos}
+\begin{block}{$n<2$}
+No es posible calcular  la cuadratura por:
 \begin{itemize}
-\item Lorem ipsum dolor sit amet, consectetur adipiscing elit
-\item Aliquam blandit faucibus nisi, sit amet dapibus enim tempus eu
-\item Nulla commodo, erat quis gravida posuere, elit lacus lobortis est, quis porttitor odio mauris at libero
-\item Nam cursus est eget velit posuere pellentesque
-\item Vestibulum faucibus velit a augue condimentum quis convallis nulla gravida
+    \item $n=1$:
+    \begin{itemize}
+        \item No hay suficientes nodos para incluir los extremos de la cuadratura $−1$ y $1$.
+        \item Con un único nodo no captaría ninguna curvatura, luego no hay forma de aproximar con precisión.
+    \end{itemize}
+    \item $n<1$: 
+    \begin{itemize}
+        \item No tiene sentido calcular una cuadratura sin nodos, o con nodos negativos.
+    \end{itemize}
 \end{itemize}
+\end{block}
+
+\begin{block}{$n=2$}
+El vector de nodos $t_i=[-1\quad 1]$, y solo hay que calcular $w_i=[w_1\quad w_n]$.
+\end{block}
 \end{frame}
 
-%------------------------------------------------
-
 \begin{frame}
-\frametitle{Blocks of Highlighted Text}
-\begin{block}{Block 1}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-\end{block}
-
-\begin{block}{Block 2}
-Pellentesque sed tellus purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum quis magna at risus dictum tempor eu vitae velit.
-\end{block}
-
-\begin{block}{Block 3}
+\frametitle{Posibles casos según los nodos pedidos}
+\begin{block}{$n>2$}
 Suspendisse tincidunt sagittis gravida. Curabitur condimentum, enim sed venenatis rutrum, ipsum neque consectetur orci, sed blandit justo nisi ac lacus.
 \end{block}
 \end{frame}
@@ -135,23 +168,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ul
 \end{frame}
 
 %------------------------------------------------
-\section{Second Section}
+\section{Gauss-Lobatto para 8 y 9 nodos}
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Table}
-\begin{table}
-\begin{tabular}{l l l}
-\toprule
-\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
-\midrule
-Treatment 1 & 0.0003262 & 0.562 \\
-Treatment 2 & 0.0015681 & 0.910 \\
-Treatment 3 & 0.0009271 & 0.296 \\
-\bottomrule
-\end{tabular}
-\caption{Table caption}
-\end{table}
+\frametitle{Gauss-Lobatto para 8 y 9 nodos}
+
 \end{frame}
 
 %------------------------------------------------
@@ -187,7 +209,48 @@ Uncomment the code on this slide to include your own image from the same directo
 %\includegraphics[width=0.8\linewidth]{test}
 %\end{figure}
 \end{frame}
+%------------------------------------------------
 
+\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+\frametitle{Verbatim}
+\begin{example}[Gauss-Lobatto con extremos -1 y 1]
+\begin{verbatim}
+function I = integraGaussLobatto(f,n)
+%I = integraGaussLobatto(f,n)
+[ti,wi]=GaussLobatto(n);
+fi=[];
+for i=1:n
+    fi=[fi f(ti(i))];
+end
+s=fi.*wi;
+I=sum(s);
+end\end{verbatim}
+\end{example}
+\end{frame}
+
+%------------------------------------------------
+%------------------------------------------------
+
+\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+\frametitle{Verbatim}
+\begin{example}[Gauss-Lobatto con extremos a y b]
+\begin{verbatim}
+function I = integraGaussLobattoAB(a,b,f,n)
+%I = integraGaussLobattoAB(f,n)
+[ti,wi]=GaussLobatto(n);
+ba=ones(1,n)*(b+a)/2;
+ti=(ti*(b-a)/2)+ba;
+fi=[];
+for i=1:n
+    fi=[fi f(ti(i))];
+end
+s=fi.*wi;
+I=sum(s)*(b-a)/2;
+end\end{verbatim}
+\end{example}
+\end{frame}
+
+%------------------------------------------------
 %------------------------------------------------
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
