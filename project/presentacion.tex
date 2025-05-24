@@ -69,9 +69,11 @@
 % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, 
 % these will automatically be printed on this slide as an overview of your presentation
 \begin{frame}
-  \frametitle{Índice} % Table of contents slide, comment this block out to remove it
+  \frametitle{Índice}
+  \scriptsize  
   \tableofcontents
 \end{frame}
+
 
 
 
@@ -337,14 +339,12 @@ Queremos probar que el polinomio de Legendre $l_i$ es función par si $i=2k$ e i
 Supongamos que $l_i$ es par y $l_{i+1}$ impar y probemos para $l_{i+2}$ y $l_{i+3}$ :
 \end{frame}
 \begin{frame}
-\frametitle{Paridad e imparidad de polinomios de Legendre}
 a) Caso par:
 \[l_{i+2}(x)=(x-b_{i+2})\cdot l_{i+1}(x)-c_{i+2}\cdot l_i(x)\quad, \quad\alpha_{i+1}=\int_{-1}^1l_{i+1}^2(x)dx>0\]
 Por lo tanto \[b_{i+2}=\frac{1}{\alpha_{i+1}} \int_{-1}^1\underbrace{x\cdot l_{i+1}^2(x)}_{impar}dx=0\]
 \[\Rightarrow l_{i+2}=\underbrace{x\cdot l_{i+1}(x)}_{par}-\underbrace{c_{i+2}\cdot l_i(x)}_{par}\Rightarrow l_{i+2}(x)\text{ es par.} \]
 \end{frame}
 \begin{frame}
-\frametitle{Paridad e imparidad de polinomios de Legendre}
 b) Caso impar:
 \[l_{i+3}(x)=(x-b_{i+3})\cdot l_{i+2}(x)-c_{i+3}\cdot l_{i+1}(x)\quad,\quad\alpha_{i+2}=\int_{-1}^1l_{i+2}^2(x)dx>0\] 
 Por lo tanto \[b_{i+3}=\frac{1}{\alpha_{i+2}}\int_{-1}^1\underbrace{x\cdot l_{i+2}^2(x)}_{impar}dx=0\]
@@ -372,7 +372,72 @@ Utilizando el primer resultado, vemos que las derivadas de los polinomios de Leg
 \subsection{Suma de pesos}
 %------------------------------------------------
 \begin{frame}
+\frametitle{Suma de pesos}
+Para demostrar que la suma de los pesos es siempre 2, consideramos el sistema matricial asociado a la cuadratura de Gauss-Lobatto con \( n \) nodos. Este garantiza la exactitud para polinomios de grado \( \leq 2n-3 \):
 
+\[
+\begin{cases}
+    \sum_{i=1}^n w_i \cdot 1 = \int_{-1}^1 1 \, dx = 2, & \text{(exactitud para \( f(x) = 1 \))} \\
+    \sum_{i=1}^n w_i x_i = \int_{-1}^1 x \, dx = 0, & \text{(exactitud para \( f(x) = x \))} \\
+    \quad \vdots & \\
+    \sum_{i=1}^n w_i x_i^{2n-3} = \int_{-1}^1 x^{2n-3} \, dx. & \text{(exactitud para \( f(x) = x^{2n-3} \))}
+\end{cases}
+\]
+\end{frame}
+\begin{frame}
+\noindent En forma matricial, el sistema se escribe como:
+\[
+\underbrace{
+\begin{bmatrix}
+1 & 1 & \cdots & 1 \\
+x_1 & x_2 & \cdots & x_n \\
+x_1^2 & x_2^2 & \cdots & x_n^2 \\
+\vdots & \vdots & \ddots & \vdots \\
+x_1^{2n-3} & x_2^{2n-3} & \cdots & x_n^{2n-3}
+\end{bmatrix}
+}_{\text{Matriz de Vandermonde traspuesta}}
+\begin{bmatrix}
+w_1 \\
+w_2 \\
+\vdots \\
+w_n
+\end{bmatrix}
+=
+\begin{bmatrix}
+2 \\
+0 \\
+\vdots \\
+\int_{-1}^1 x^{2n-3} dx
+\end{bmatrix}.
+\]
+
+\noindent La primera ecuación del sistema [ $\sum_{i=1}^n w_i = 2$ ], es una condición necesaria para garantizar la exactitud en funciones constantes. Los pesos \( w_1, \ldots, w_n \) se calculan resolviendo este sistema, asegurando que la suma siempre sea 2 independientemente de \( n \).
+\end{frame}
+%------------------------------------------------ 
+\subsection{Gauss-Lobatto 8 y 9 nodos}
+\begin{frame}
+\frametitle{Gauss-Lobatto 8 y 9 nodos}
+\begin{block}{8 nodos}
+\begin{verbatim}
+
+>> [t8,w8] = GaussLobatto(8)
+
+t8 =
+
+    1.0000    0.8717    0.5917    0.2093   -0.2093   -0.5917   -0.8717   -1.0000
+
+
+w8 =
+
+    0.0357    0.2107    0.3411    0.4125    0.4125    0.3411    0.2107    0.0357
+    
+>> sum(w8)
+
+ans =
+
+    2.0000
+\end{verbatim}
+\end{block}
 \end{frame}
 %------------------------------------------------
 \section{Integracion mediante Gauss-Lobatto}
@@ -452,14 +517,14 @@ $$\Rightarrow \int_{a + s_1}^b f(x) \, dx + \int_{a + s_2}^{a + s_1} f(x) \, dx 
 %------------------------------------------------
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+%Br Brr Patapim
+
 \frametitle{Gauss-Lobatto para integrales impropias}
 \begin{exampleblock}{Gauss-Lobatto para integrales impropias}
 \begin{verbatim}
 function I = integraGaussLobattoImpropio(a,b,f,n,k)
 %I = IntegraGaussLobattoImpropio(a,b,f,n,k)
-I=0;
-j=1;
-a_end=a+1/(2^j);
+I=0; j=1; a_end=a+1/(2^j);
 while a_end>b
     j=j+1;
     a_end=a+1/(2^j);
@@ -669,7 +734,7 @@ Este resultado confirma que \( I_3 \) es una \textbf{integral impropia divergent
 \begin{frame}
 \frametitle{Referencias}
 \footnotesize{
-  \begin{thebibliography}{99} 
+  \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
     \bibitem[Smith, 2012]{p1} John Smith (2012)
       \newblock Title of the publication
       \newblock \emph{Journal Name} 12(3), 45 -- 678.
