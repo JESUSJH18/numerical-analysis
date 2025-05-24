@@ -299,7 +299,6 @@ w_1(1) + w_2 x_2^2 + w_3(1) = \frac{2}{3}.
 \noindent La solución \( w_1 = w_3 = \frac{1}{3} \), \( w_2 = \frac{4}{3} \), y \( x_2 = 0 \), cumple \( \sum w_i = 2 \), validando la propiedad general.
 
 
-\end{itemize}
 \subsection{Gauss-Lobatto para 8 y 9 nodos}
 
 \begin{itemize}
@@ -315,6 +314,13 @@ t8 =
 w8 =
 
     0.0357    0.2107    0.3411    0.4125    0.4125    0.3411    0.2107    0.0357
+\end{lstlisting}
+\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
+>> sum(w8)
+
+ans =
+
+    2.0000
 \end{lstlisting}
 
 \item \textbf{9 nodos}
@@ -332,20 +338,18 @@ w9 =
 \end{lstlisting}
 
 \begin{lstlisting}[frame=single, style=Matlab-Pyglike]
->> sum(w8)
-
-ans =
-
-    2.0000
-\end{lstlisting}
-\begin{lstlisting}[frame=single, style=Matlab-Pyglike]
 >> sum(w9)
 
 ans =
 
     2.0000
 \end{lstlisting}
+\end{itemize}
 
+Podemos ver que tanto para 8 como para 9 nodos se cumple que:
+\begin{itemize}
+    \item la lista de nodos es simétrica respecto al 0
+    \item la lista de pesos es simétrica y la suma de pesos es igual 2
 \end{itemize}
 \section{Implementación del programa de integración mediante Gauss-Lobatto}
 
