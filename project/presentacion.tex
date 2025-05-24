@@ -1,5 +1,10 @@
 \documentclass{beamer}
 
+
+
+
+
+
 %% Configuración de la presentación
 \mode<presentation> {
   %%% Selección de estilo
@@ -20,6 +25,9 @@
 \usepackage{lmodern}
 
 %% Gráficos
+
+\usepackage{colortbl}
+\usepackage[table]{xcolor}
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
 
@@ -31,6 +39,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \selectlanguage{spanish}
+
 
 %----------------------------------------------------------------------------------------
 %	TÍTULO
@@ -178,23 +187,135 @@ $wi=[w_1 \quad w_i \quad w_n]= \left[\tfrac{2}{n(n-1)} \quad \frac{2}{n(n-1)(p_{
 \frac{d}{dx}(a_k x^k)=k a_k x^{k-1}
 \]
 Los coeficientes de la derivada los guardaremos en el vector \textit{ci}.
-La derivada del polinomio de grado $n-1$ tiene grado $n-2$, eliminamos el último término correspondiente al grado 0, cuya derivada es 0.  \begin{lstlisting}
-ci=((n-1):-1:0).*cl;
-ci=ci(:,(1:n-1));
-\end{lstlisting}
+La derivada del polinomio de grado $n-1$ tiene grado $n-2$, eliminamos el último término correspondiente al grado 0, cuya derivada es 0. 
 
 \end{frame}
+\begin{frame}[fragile]
+\frametitle{El vector de nodos intermedios $ti$}
 
+
+
+\textbf{Derivada del polinomio de Legendre de orden $n-1$.}
+\\ Aplicamos la regla de derivación de polinomios:
+\[
+\frac{d}{dx}(a_k x^k)=k a_k x^{k-1}
+\]
+Los coeficientes de la derivada los guardaremos en el vector \textit{ci}.
+La derivada del polinomio de grado $n-1$ tiene grado $n-2$, eliminamos el último término correspondiente al grado 0, cuya derivada es 0. \\ 
+\begin{exampleblock}{Código}
+\begin{verbatim}
+ci=((n-1):-1:0).*cl; 
+ci=ci(:,(1:n-1));
+\end{verbatim}
+\end{exampleblock}
+
+
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{El vector de nodos intermedios $ti$}
+
+\textbf{Raíces de la derivada del polinomio de Legendre de orden $n-1$.}
+Utilizando el comando \textit{root}, pero como nos da un vector columna (al que llamamos $ti$) lo tenemos que trasponer. Queremos trabajar con vectores fila y ordenamos de forma descendente.
+
+\textit{\\Código:}
+\begin{exampleblock}{Código}
+\begin{verbatim}
+ti=roots(ci);
+ti=ti';
+ti=sort(ti,"descend");
+\end{verbatim}
+\end{exampleblock}
+\end{frame}
 
 %------------------------------------------------
 \subsection{El vector de pesos $wi$}
 %------------------------------------------------
 \begin{frame}
 \frametitle{El vector de pesos $wi$}
-$wn=w_1=w_n$
-calculamos los pesos de los extremos $w_1$ y $w_n$, que asignamos a la variable \textit{wn}, y definimos el vector, por ahora vacío, \textit{wi}.
+Asignamos a la variable \textit{wn} el valor de los pesos de los extremos $wn=w_1=w_n$, e inicializamos el vector \textit{wi} vacío.
 
-Luego, calculamos mediante un bucle \textit{for} los pesos intermedios $w_i$, que se pueden expresar como
+Con un bucle \textcolor{blue}{for} calculamos los pesos intermedios 
+\[
+w_i=w_n\frac{1}{(p_{n-1}(t_i))^2},\qquad i=2,3,...,n-1.
+\]
+que vamos añadiendo al vector \textit{wi}.
+
+Agregamos los pesos de los extremos \textit{wn} al vector \textit{wi}, obteniendo el vector de pesos \textit{wi}.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{El vector de pesos $wi$}
+\begin{exampleblock}{Código}
+\begin{verbatim}
+for i=1:(n-2)
+    pi=polyval(cl,ti(i));
+    w=wn/(pi^2);
+    wi=[wi w];
+end
+wi=[wn wi wn];
+\end{verbatim}
+\end{exampleblock}
+\end{frame}
+
+%------------------------------------------------
+\subsection{El vector de nodos completo \textit{ti}}
+%------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{El vector de nodos completo \textit{ti}}
+Solo falta añadir los nodos de los extremos $-1$ y 1 al vector \textit{ti}. Con esto, ya tenemos el vector de nodos \textit{ti} completo.
+
+\begin{exampleblock}{Código}
+\begin{verbatim}
+ti=[1 ti -1];
+\end{verbatim}
+\end{exampleblock}
+\end{frame}
+
+%------------------------------------------------
+\subsection{Programa final}
+%------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{Programa final}
+\begin{exampleblock}{Gauss-Lobatto}
+\begin{verbatim}
+function [ti,wi] = GaussLobatto(n)
+%[ti,wi] = GaussLobatto(n)
+wi=[];
+wn=2/(n*(n-1));
+if n>2
+    cl=LegendreT(n-1);
+    ci=((n-1):-1:0).*cl;
+    ci=ci(:,(1:n-1));
+    ti=roots(ci);
+    ti=ti';
+    ti=sort(ti,"descend");
+    for i=1:(n-2)
+        pi=polyval(cl,ti(i));
+\end{verbatim}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Programa final}
+\begin{exampleblock}{}
+\begin{verbatim}
+        w=wn/(pi^2);
+        wi=[wi w];
+    end
+    wi=[wn wi wn];
+    ti=[1 ti -1];
+else 
+    if n==2
+        wi=[wn wn];
+        ti=[1 -1];
+    else
+    disp("Se necesitan al menos 2 nodos para la 
+    cuadratura")
+    end
+end
+end
+\end{verbatim}
+\end{exampleblock}
 \end{frame}
 %------------------------------------------------
 \section{Gauss-Lobatto para 8 y 9 nodos}
@@ -205,7 +326,7 @@ Luego, calculamos mediante un bucle \textit{for} los pesos intermedios $w_i$, qu
 Para justificar los resultados obtenidos por el programa \texttt{GaussLobatto} nos basaremos en un par de propiedades de los pesos y los nodos que demostraremos a continuación:
 \begin{itemize}
     \item Simetría de nodos respecto al 0
-    \item La suma de todos los pesos es igual a 2 y son simétricos respecto a su máximo
+    \item La suma de todos los pesos es igual a 2 y son simétricos
 \end{itemize}
 \end{frame}
 
@@ -216,43 +337,53 @@ Para justificar los resultados obtenidos por el programa \texttt{GaussLobatto} n
 \frametitle{Paridad e imparidad de polinomios de Legendre}
 Queremos probar que el polinomio de Legendre $l_i$ es función par si $i=2k$ e impar si $i=2k+1$, $k\in\mathbb{N}\cup\{0\}$ por el método de inducción. Podemos ver que para los casos $i=0, 1, 2, 3$ se cumple:
 \[l_0=1\quad;\quad l_1=x\quad;\quad l_2=x^2-\frac{1}{3}\quad;\quad l_3=x^3-\frac{3}{5}x \]
-\begin{itemize}
+Supongamos que $l_i$ es par y $l_{i+1}$ impar y probemos para $l_{i+2}$ y $l_{i+3}$ :
+\end{frame}
+\begin{frame}
+\frametitle{Paridad e imparidad de polinomios de Legendre}
+a) Caso par:
+\[l_{i+2}(x)=(x-b_{i+2})\cdot l_{i+1}(x)-c_{i+2}\cdot l_i(x)\quad, \quad\alpha_{i+1}=\int_{-1}^1l_{i+1}^2(x)dx>0\]
+Por lo tanto \[b_{i+2}=\frac{1}{\alpha_{i+1}} \int_{-1}^1\underbrace{x\cdot l_{i+1}^2(x)}_{impar}dx=0\]
+\[\Rightarrow l_{i+2}=\underbrace{x\cdot l_{i+1}(x)}_{par}-\underbrace{c_{i+2}\cdot l_i(x)}_{par}\Rightarrow l_{i+2}(x)\text{ es par.} \]
+\end{frame}
+\begin{frame}
+\frametitle{Paridad e imparidad de polinomios de Legendre}
+b) Caso impar:
+\[l_{i+3}(x)=(x-b_{i+3})\cdot l_{i+2}(x)-c_{i+3}\cdot l_{i+1}(x)\quad,\quad\alpha_{i+2}=\int_{-1}^1l_{i+2}^2(x)dx>0\] 
+Por lo tanto \[b_{i+3}=\frac{1}{\alpha_{i+2}}\int_{-1}^1\underbrace{x\cdot l_{i+2}^2(x)}_{impar}dx=0\]
+\[\Rightarrow b_{i+3}=\underbrace{x\cdot l_{i+2}(x)}_{impar}-\underbrace{c_{i+3}\cdot l_{i+1}(x)}_{impar}\Rightarrow l_{i+3}(x)\text{ es impar.}\]
+\end{frame}
+%------------------------------------------------
 
-
-
+\begin{frame} 
+\frametitle{Simetría de raíces para funciones pares e impares}
+\begin{block}{Caso par} 
+Supongamos que existe una raíz $x_i:f(x_i)=0$. Al ser $f(x)$ una función par, se cumple que $f(-x_i)=f(x_i)=0$. Por lo tanto, se cumple que para cada raíz de la función par, su elemento opuesto también es raíz.
+\end{block}
+\begin{block}{Caso impar} 
+Supongamos que existe una raíz $x_i:f(x_i)=0$. Al ser $f(x)$ impar, se cumple que $-f(-x_i)=f(x_i)=0\Rightarrow f(-x_i)=0$. Por lo tanto, se cumple que para cada raíz de la función par, su elemento opuesto también es raíz.
+\end{block}
 \end{frame}
 
 %------------------------------------------------
 
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Verbatim}
-\begin{example}[Theorem Slide Code]
-\begin{verbatim}
 \begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}\end{verbatim}
-\end{example}
+\frametitle{Simetría nodos y pesos}
+Utilizando el primer resultado, vemos que las derivadas de los polinomios de Legendre truncados también deben ser o pares o impares, dado que al derivar el polinomio se invierte la paridad. Por el segundo resultado, el conjunto de raíces de $\tilde l_i(x)'$ (que corresponden con los nodos de Gauss-Lobatto) debe ser simétrico entorno al 0. Dado que los pesos se calculan a partir de $(p_{n-1}(t_i))^2$, y teniendo en cuenta que $p_{n-1}^2(x)$ debe ser par y que los nodos son simétricos, entonces los pesos también lo deben ser. 
 \end{frame}
-
 %------------------------------------------------
-
+\subsection{Suma de pesos}
+%------------------------------------------------
 \begin{frame}
-\frametitle{Figure}
-Uncomment the code on this slide to include your own image from the same directory as the template .TeX file.
-%\begin{figure}
-%\includegraphics[width=0.8\linewidth]{test}
-%\end{figure}
+
 \end{frame}
 %------------------------------------------------
 \section{Integracion mediante Gauss-Lobatto}
 %------------------------------------------------
-
+\subsection{Gauss-Lobatto con extremos -1 y 1}
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
 \frametitle{Gauss-Lobatto con extremos -1 y 1}
-\begin{example}[Gauss-Lobatto con extremos -1 y 1]
+\begin{exampleblock}{Gauss-Lobatto con extremos -1 y 1}
 \begin{verbatim}
 function I = integraGaussLobatto(f,n)
 %I = integraGaussLobatto(f,n)
@@ -263,16 +394,17 @@ for i=1:n
 end
 s=fi.*wi;
 I=sum(s);
-end\end{verbatim}
-\end{example}
+end
+\end{verbatim}
+\end{exampleblock}
 \end{frame}
 
 %------------------------------------------------
 
 %------------------------------------------------
 
-%\subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
 
+\subsection{Gauss-Lobatto con extremos a y b}
 \begin{frame}
 \frametitle{Gauss-Lobatto con extremos a y b}
 El procedimiento es igual al apartado anterior, solo hay que realizar el \textcolor{blue}{cambio de variable}:
@@ -286,7 +418,7 @@ por lo que podemos aproximar
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
 \frametitle{Gauss-Lobatto con extremos a y b}
-\begin{example}[Gauss-Lobatto con extremos a y b]
+\begin{exampleblock}{Gauss-Lobatto con extremos a y b}
 \begin{verbatim}
 function I = integraGaussLobattoAB(a,b,f,n)
 %I = integraGaussLobattoAB(f,n)
@@ -300,21 +432,22 @@ end
 s=fi.*wi;
 I=sum(s)*(b-a)/2;
 end\end{verbatim}
-\end{example}
+\end{exampleblock}
 \end{frame}
 
 %------------------------------------------------
 %------------------------------------------------
 
-%\subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
 
+\subsection{Gauss-Lobatto para integrales impropias}
 \begin{frame}
-\frametitle{Gauss-Lobatto con extremos a y b para integrales impropias}
-Consideramos una sucesión decreciente convergente a cero
-y aproximar el valor de la integral como suma finita de integrales propias.
+\frametitle{Gauss-Lobatto para integrales impropias}
+Consideremos la sucesion decreciente convergente a cero $\{s_n\}_{n=1}^n$: $a+s_1<b$ $\wedge$ \stackrel{*} $s_k > s_{k-1} \forall k$ \wedge $\lim_{n \rightarrow \infty} s_n = 0$
+y la siguiente suma finita de integrales propias para probar que este metodo para sumas infinitas en efecto converge al valor de
+la integral impropia original
 $$
 \int_{a + s_n}^b f(x) \, dx + \int_{a + s_{n-1}}^{a + s_n} f(x) \, dx + \cdots + \int_{a + s_1}^{a + s_2} f(x) \, dx \stackrel{*}= \int_a^b f(x) \, dx \quad $$
-$$\Rightarrow \int_{a + s_1}^b f(x) \, dx + \int_{a + s_2}^{a + s_1} f(x) \, dx + \cdots = \lim_{n \rightarrow \infty} \int_{a + s_n}^b f(x) \, dx = \int_{a + 0}^b f(x) \, dx = \int_a^b f(x) \, dx$$
+$$\Rightarrow \int_{a + s_1}^b f(x) \, dx + \int_{a + s_2}^{a + s_1} f(x) \, dx + \cdots = \lim_{n \rightarrow \infty} \int_{a + s_n}^b f(x) \, dx $$$$ =\int_{a + 0}^b f(x) \, dx = \int_a^b f(x) \, dx$$
 \\~\\
 \end{frame}
 
@@ -322,14 +455,196 @@ $$\Rightarrow \int_{a + s_1}^b f(x) \, dx + \int_{a + s_2}^{a + s_1} f(x) \, dx 
 %------------------------------------------------
 
 \begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Citation}
-An example of the \verb|\cite| command to cite within the presentation:\\~
-
-This statement requires citation \cite{p1}.
+\frametitle{Gauss-Lobatto para integrales impropias}
+\begin{exampleblock}{Gauss-Lobatto para integrales impropias}
+\begin{verbatim}
+function I = integraGaussLobattoImpropio(a,b,f,n,k)
+%I = IntegraGaussLobattoImpropio(a,b,f,n,k)
+I=0;
+j=1;
+a_end=a+1/(2^j);
+while a_end>b
+    j=j+1;
+    a_end=a+1/(2^j);
+end
+for i=j:j+k-1
+    ai=1/(2^i);
+    I=I+integraGaussLobattoAB(a+ai/2,a+ai,f,n);
+end
+I=I+integraGaussLobattoAB(a_end,b,f,n);
+end\end{verbatim}
+\end{exampleblock}
 \end{frame}
 
 %------------------------------------------------
+\section{Aproximación mediante Gauss-Lobatto con 9 nodos}
+%------------------------------------------------
 
+\begin{frame}
+\frametitle{Aproximación mediante Gauss-Lobatto con 9 nodos}
+Para comprobar el resultado de las siguientes integrales usaremos el comando quadgk.
+\begin{center}
+\displaystyle I_1=\int_{0}^{\pi/3} \! \frac{1}{1-\sin(x)}  \,dx
+\end{center}
+\begin{table}[h]
+    \centering
+    \rowcolors{2}{gray!10}{white} % filas alternadas en gris claro
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \rowcolor{gray!30} % color de la primera fila
+         & Gauss Lobatto 9 nodos & quadgk\\
+        \hline
+         errores & 2.732050857019763 & 2.732050807568876\\
+        \hline
+    \end{tabular}
+    
+    \label{tab:my_label}
+\end{table}
+\begin{table}[h]
+    \centering
+    \rowcolors{2}{gray!10}{white} % filas alternadas en gris claro
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \rowcolor{gray!30} % color de la primera fila
+         error absoluto  \\
+        \hline
+         4.945088694086053e-08 \\
+        \hline
+    \end{tabular}
+    
+    \label{tab:my_label}
+\end{table}
+\end{frame}
+
+%------------------------------------------------
+%------------------------------------------------
+
+\begin{frame} 
+\frametitle{Aproximación mediante Gauss-Lobatto con 9 nodos}
+\begin{center}
+\displaystyle I_2=\int_{0}^{\pi} \! \frac{\sin(x)}{x^{3/2}}  \,dx
+\\
+\end{center}
+Para \( I_2 \), se utilizó la función \texttt{integraGaussLobattoImpropio}  debido a la singularidad de la función \( f(x) = \frac{\sin(x)}{x^{3/2}} \) en \( x = 0 \).
+\begin{table}[h]
+    \centering
+    \rowcolors{2}{gray!10}{white} % filas alternadas en gris claro
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \rowcolor{gray!30} % color de la primera fila
+         & Gauss Lobatto 9 nodos & quadgk\\
+        \hline
+         errores & 2.651469905786794 & 2.651469253040811\\
+        \hline
+    \end{tabular}
+    
+    \label{tab:my_label}
+\end{table}
+\begin{table}[h]
+    \centering
+    \rowcolors{2}{gray!10}{white} % filas alternadas en gris claro
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \rowcolor{gray!30} % color de la primera fila
+         error absoluto  \\
+        \hline
+         6.527459821548121e-07 \\
+        \hline
+    \end{tabular}
+    
+    \label{tab:my_label}
+\end{table}
+\end{frame}
+
+%------------------------------------------------
+%------------------------------------------------
+
+\begin{frame} % Need to use the fragile option when verbatim is used in the slide
+\frametitle{Aproximación mediante Gauss-Lobatto con 9 nodos}
+\(\displaystyle I_3=\int_{0}^{1} \! \frac{e^x}{x^2}  \,dx\)
+
+\\En el caso de \( I_3 \), tanto la cuadratura de Gauss-Lobatto como \textit{quadgk} devuelven un valor de \( \infty \). Esto indica que la integral diverge, lo cual es esperado debido a la singularidad de la función \( f(x) = \frac{e^x}{x^2} \) en \( x = 0 \). La función crece de manera extremadamente rápida cerca de \( x = 0 \), y la integral no converge en el intervalo \( [0, 1] \). Este resultado confirma que \( I_3 \) es una integral impropia que no tiene un valor finito.
+\end{frame}
+
+
+%------------------------------------------------
+\section{Comparación con Gauss-Legendre}
+%------------------------------------------------
+\begin{frame}
+\frametitle{Comparación con Gauss-Legendre}
+\displaystyle I_1=\int_{0}^{\pi/3} \! \frac{1}{1-\sin(x)}  \,dx
+
+\begin{table}[h]
+
+    \rowcolors{2}{gray!10}{white} % filas alternadas en gris claro
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \rowcolor{gray!30} % color de la primera fila
+         & I_1 & errores\\
+        \hline
+         Gauss-Lobatto &  2.723600154858061 & 4.759629890216388e-08\\
+        \hline
+        Gauss-Legendre &  2.723600103938956 & 3.322805586236655e-09\\
+        \hline
+        quadgk & 2.723600107261762 &\\
+        \hline
+    \end{tabular}
+    
+    \label{tab:my_label}
+\end{table}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Comparación con Gauss-Legendre}
+\displaystyle I_2=\int_{0}^{\pi} \! \frac{\sin(x)}{x^{3/2}}  \,dx
+
+\begin{table}[h]
+
+    \rowcolors{2}{gray!10}{white} % filas alternadas en gris claro
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \rowcolor{gray!30} % color de la primera fila
+         & I_2 & errores\\
+        \hline
+         Gauss-Lobatto &  3.564891079137420 & 0.976667467013740\\
+        \hline
+        Gauss-Legendre &  2.480811316956006 & 0.107412295167674\\
+        \hline
+        quadgk & 2.588223612123681 &\\
+        \hline
+    \end{tabular}
+    
+    \label{tab:my_label}
+\end{table}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Comparación con Gauss-Legendre}
+\(\displaystyle I_3=\int_{0}^{1} \! \frac{e^x}{x^2}  \,dx\)
+
+\begin{table}[h]
+
+    \rowcolors{2}{gray!10}{white} % filas alternadas en gris claro
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \rowcolor{gray!30} % color de la primera fila
+         & I_3 & errores\\
+        \hline
+         Gauss-Lobatto &  1.391952022433983e+4 & 1.291301606846351e+4\\
+        \hline
+        Gauss-Legendre &  1.676112081728000e+2 & 8.388929477035150e+2\\
+        \hline
+        quadgk & 1.006504155876315e+3 &\\
+        \hline
+    \end{tabular}
+    
+    \label{tab:my_label}
+\end{table}
+
+\end{frame}
+%------------------------------------------------
 %% Bibliografía
 \begin{frame}
 \frametitle{Referencias}
