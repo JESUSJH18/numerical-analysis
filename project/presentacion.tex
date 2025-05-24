@@ -167,27 +167,24 @@ $wi=[w_1 \quad w_i \quad w_n]= \left[\tfrac{2}{n(n-1)} \quad \frac{2}{n(n-1)(p_{
 %------------------------------------------------
 \subsection{El vector de nodos intermedios $ti$}
 %------------------------------------------------
-\begin{frame}
+\begin{frame}[fragile]
 \frametitle{El vector de nodos intermedios $ti$}
 
 \textbf{Polinomio de Legendre de orden $n-1$}
 \begin{itemize}
     \item Código auxiliar $LegendreT.m$, que devuelve los coeficientes truncados.
-    \item Lo guardamos en el vector $cl$.
-    \begin{lstlisting} $cl=LegendreT(n-1)$
-    \end{lstlisting}
+    \item Lo guardamos en el vector $cl$. \\
+    \begin{exampleblock}{Código}
+    \begin{verbatim}
+    cl=LegendreT(n-1)
+    \end{verbatim}
+    \end{exampleblock}
+     
+   
     
 \end{itemize}
 
-\vspace{1em}
 
-\textbf{Derivada del polinomio de Legendre de orden $n-1$.}
-\\ Aplicamos la regla de derivación de polinomios:
-\[
-\frac{d}{dx}(a_k x^k)=k a_k x^{k-1}
-\]
-Los coeficientes de la derivada los guardaremos en el vector \textit{ci}.
-La derivada del polinomio de grado $n-1$ tiene grado $n-2$, eliminamos el último término correspondiente al grado 0, cuya derivada es 0. 
 
 \end{frame}
 \begin{frame}[fragile]
@@ -482,89 +479,112 @@ end\end{verbatim}
 
 \begin{frame}
 \frametitle{Aproximación mediante Gauss-Lobatto con 9 nodos}
-Para comprobar el resultado de las siguientes integrales usaremos el comando quadgk.
-\begin{center}
-\displaystyle I_1=\int_{0}^{\pi/3} \! \frac{1}{1-\sin(x)}  \,dx
-\end{center}
+
+Para comprobar el resultado de las siguientes integrales usaremos el comando \texttt{quadgk}.
+
+\[
+\displaystyle I_1 = \int_{0}^{\pi/3} \! \frac{1}{1 - \sin(x)} \, dx
+\]
+
 \begin{table}[h]
     \centering
-    \rowcolors{2}{gray!10}{white} % filas alternadas en gris claro
-    \begin{tabular}{|c|c|c|c|}
+    \rowcolors{2}{gray!10}{white}
+    \begin{tabular}{|c|c|c|}
         \hline
-        \rowcolor{gray!30} % color de la primera fila
-         & Gauss Lobatto 9 nodos & quadgk\\
+        \rowcolor{gray!30}
+         & Gauss Lobatto 9 nodos & quadgk \\
         \hline
-         errores & 2.732050857019763 & 2.732050807568876\\
+         errores & 2.732050857019763 & 2.732050807568876 \\
         \hline
     \end{tabular}
-    
-    \label{tab:my_label}
 \end{table}
+
+\vspace{0.5em}
+
 \begin{table}[h]
     \centering
-    \rowcolors{2}{gray!10}{white} % filas alternadas en gris claro
-    \begin{tabular}{|c|c|c|c|}
+    \rowcolors{2}{gray!10}{white}
+    \begin{tabular}{|c|}
         \hline
-        \rowcolor{gray!30} % color de la primera fila
-         error absoluto  \\
+        \rowcolor{gray!30}
+         error absoluto \\
         \hline
          4.945088694086053e-08 \\
         \hline
     \end{tabular}
-    
-    \label{tab:my_label}
 \end{table}
 \end{frame}
+
 
 %------------------------------------------------
 %------------------------------------------------
 
 \begin{frame} 
 \frametitle{Aproximación mediante Gauss-Lobatto con 9 nodos}
-\begin{center}
-\displaystyle I_2=\int_{0}^{\pi} \! \frac{\sin(x)}{x^{3/2}}  \,dx
-\\
-\end{center}
-Para \( I_2 \), se utilizó la función \texttt{integraGaussLobattoImpropio}  debido a la singularidad de la función \( f(x) = \frac{\sin(x)}{x^{3/2}} \) en \( x = 0 \).
+
+\[
+\displaystyle I_2 = \int_{0}^{\pi} \! \frac{\sin(x)}{x^{3/2}} \, dx
+\]
+
+Para \( I_2 \), se utilizó la función \texttt{integraGaussLobattoImpropio} debido a la singularidad de la función \( f(x) = \frac{\sin(x)}{x^{3/2}} \) en \( x = 0 \).
+
+\vspace{1em}
+
 \begin{table}[h]
     \centering
-    \rowcolors{2}{gray!10}{white} % filas alternadas en gris claro
-    \begin{tabular}{|c|c|c|c|}
+    \rowcolors{2}{gray!10}{white}
+    \begin{tabular}{|c|c|c|}
         \hline
-        \rowcolor{gray!30} % color de la primera fila
-         & Gauss Lobatto 9 nodos & quadgk\\
+        \rowcolor{gray!30}
+         & Gauss Lobatto 9 nodos & quadgk \\
         \hline
-         errores & 2.651469905786794 & 2.651469253040811\\
+         errores & 2.651469905786794 & 2.651469253040811 \\
         \hline
     \end{tabular}
-    
-    \label{tab:my_label}
 \end{table}
+
+\vspace{0.5em}
+
 \begin{table}[h]
     \centering
-    \rowcolors{2}{gray!10}{white} % filas alternadas en gris claro
-    \begin{tabular}{|c|c|c|c|}
+    \rowcolors{2}{gray!10}{white}
+    \begin{tabular}{|c|}
         \hline
-        \rowcolor{gray!30} % color de la primera fila
-         error absoluto  \\
+        \rowcolor{gray!30}
+         error absoluto \\
         \hline
          6.527459821548121e-07 \\
         \hline
     \end{tabular}
-    
-    \label{tab:my_label}
 \end{table}
 \end{frame}
 
+
 %------------------------------------------------
 %------------------------------------------------
 
-\begin{frame} % Need to use the fragile option when verbatim is used in the slide
+\begin{frame}
 \frametitle{Aproximación mediante Gauss-Lobatto con 9 nodos}
-\(\displaystyle I_3=\int_{0}^{1} \! \frac{e^x}{x^2}  \,dx\)
 
-\\En el caso de \( I_3 \), tanto la cuadratura de Gauss-Lobatto como \textit{quadgk} devuelven un valor de \( \infty \). Esto indica que la integral diverge, lo cual es esperado debido a la singularidad de la función \( f(x) = \frac{e^x}{x^2} \) en \( x = 0 \). La función crece de manera extremadamente rápida cerca de \( x = 0 \), y la integral no converge en el intervalo \( [0, 1] \). Este resultado confirma que \( I_3 \) es una integral impropia que no tiene un valor finito.
+\[
+\displaystyle I_3 = \int_{0}^{1} \! \frac{e^x}{x^2} \, dx
+\]
+
+\vspace{1em}
+
+En el caso de \( I_3 \), tanto la cuadratura de Gauss-Lobatto como \texttt{quadgk} devuelven un valor de \( \infty \).  
+Esto indica que la integral \textbf{diverge}, lo cual es esperado debido a la \textbf{singularidad} de la función  
+\( f(x) = \frac{e^x}{x^2} \) en \( x = 0 \).
+
+\vspace{0.5em}
+
+La función crece de forma extremadamente rápida cerca de \( x = 0 \), por lo que la integral no converge en el intervalo \( [0, 1] \).
+
+\vspace{0.5em}
+
+Este resultado confirma que \( I_3 \) es una \textbf{integral impropia divergente} que no tiene un valor finito.
 \end{frame}
+
 
 
 %------------------------------------------------
