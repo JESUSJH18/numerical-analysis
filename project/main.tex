@@ -384,7 +384,7 @@ por lo que podemos aproximar
 \\
 \begin{lstlisting}[frame=single, numbers=left, style=Matlab-Pyglike]
 function I = integraGaussLobattoAB(a,b,f,n)
-%I = integraGaussLobattoAB(f,n)
+%I = integraGaussLobattoAB(a,b,f,n)
 [ti,wi]=GaussLobatto(n);
 ba=ones(1,n)*(b+a)/2;
 ti=(ti*(b-a)/2)+ba;
@@ -405,10 +405,10 @@ Con estos dos programas, buscamos obtener la solución de integrales impropias m
  
 A continuación, se probará que este método para sumas infinitas en efecto converge al valor de la integral impropia original:
 
-Consideremos una sucesión $\{s_n\}_{n=1}^n$: $a+s_1<b$ $\wedge$ \stackrel{*} $s_k > s_{k-1} \forall k$ \wedge $\lim_{n \rightarrow \infty} s_n = 0$
+Consideremos una sucesión $\{s_n\}_{n=1}^n$: $a+s_1<b$ $\wedge$ \stackrel{*} $s_k > s_{k+1} \forall k$ \in\mathbb{N}$ $\wedge $ \lim_{n \rightarrow \infty} s_n = 0$
 y la siguiente suma finita de integrales propias:
 $$
-\int_{a + s_n}^b f(x) \, dx + \int_{a + s_{n-1}}^{a + s_n} f(x) \, dx + \cdots + \int_{a + s_1}^{a + s_2} f(x) \, dx \stackrel{*}= \int_a^b f(x) \, dx \quad $$
+\int_{a + s_1}^b f(x) \, dx + \int_{a + s_{2}}^{a + s_1} f(x) \, dx + \cdots + \int_{a + s_n}^{a + s_{n-1}} f(x) \, dx \stackrel{*}= \int_{a+s_n}^b f(x) \, dx \quad $$
 $$\Rightarrow \int_{a + s_1}^b f(x) \, dx + \int_{a + s_2}^{a + s_1} f(x) \, dx + \cdots = \lim_{n \rightarrow \infty} \int_{a + s_n}^b f(x) \, dx = \int_{a + 0}^b f(x) \, dx = \int_a^b f(x) \, dx$$
 
 \subsubsection{Implementación del programa}
@@ -645,7 +645,6 @@ Error2Lob =
 Al usar \texttt{integraGaussLobattoImpropio} para \( I_2 \) con \( k = 100 \) en el intervalo original \( [0, \pi] \), Gauss-Lobatto mejora significativamente, dando un valor de \( 2.651469905786794 \) con un error de \( 6.527459821548121 \times 10^{-7} \), mucho menor que el error de Gauss-Legendre (\( 0.107412295167674 \)) en el intervalo ajustado \( [10^{-3}, \pi - 10^{-3}] \). Esto demuestra que \texttt{integraGaussLobattoImpropio} maneja mejor la singularidad en \( x = 0 \), ya que está diseñado para integrales impropias, mientras que Gauss-Legendre y \texttt{integraGaussLobattoAB} no están optimizados para este tipo de problemas.
 \end{itemize}
 \\
-
 \item $\displaystyle I_3=\int_{0}^{1} \! \frac{e^x}{x^2}  \,dx$
 \\
 \begin{itemize}
