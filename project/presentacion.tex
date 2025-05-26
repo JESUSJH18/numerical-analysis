@@ -1,10 +1,6 @@
 \documentclass{beamer}
 
 
-
-
-
-
 %% Configuración de la presentación
 \mode<presentation> {
   %%% Selección de estilo
@@ -39,54 +35,44 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \selectlanguage{spanish}
+\usepackage{fontawesome}
 
+\setbeamertemplate{bibliography item}{\faBook}
 
-%----------------------------------------------------------------------------------------
+%----------------------------------------------------------------------
 %	TÍTULO
-%----------------------------------------------------------------------------------------
+%----------------------------------------------------------------------
 
 
-\title{Integración numérica de Gauss-Lobatto} % The short title appears at the bottom of every slide, the full title is only on the title page
+\title{Integración numérica de Gauss-Lobatto} 
 
 \author[Jesús de Juan, Jürgen León, Pablo Navarro, María C. Sánchez]{Jesús de Juan López \\
         Jürgen León Martín \\
         Pablo Navarro Rubio \\
-        María Cruz Sánchez Montoya} % Your name
-\institute[UPV] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
-{ Trabajo I4, Grupo 2 \\ % Your institution for the title page
-}
-\date{Universidad Politécnica de Valencia} % Date, can be changed to a custom date
-
-
+        María Cruz Sánchez Montoya} 
+\institute[UPV] 
+{ Trabajo I4, Grupo 2 \\}
+\date{Universidad Politécnica de Valencia} 
+%----------------------------------------------------------------------
 \begin{document}
 
 %% Diapositiva de título.
 \begin{frame}
-\titlepage % Print the title page as the first slide
+\titlepage 
 \end{frame}
 
 %% Diapositiva de contenidos.
-% Throughout your presentation, if you choose to use \section{} and \subsection{} commands, 
-% these will automatically be printed on this slide as an overview of your presentation
 \begin{frame}
   \frametitle{Índice}
   \scriptsize  
   \tableofcontents
 \end{frame}
-
-
-
-
-%----------------------------------------------------------------------------------------
-%	PRESENTACIÓN
-%----------------------------------------------------------------------------------------
+%----------------------------------------------------------------------
+%----------------------------------------------------------------------
 
 %------------------------------------------------
-\section{Introducción} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
+\section{Introducción}
 %------------------------------------------------
-
-%\subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
-
 \begin{frame}
 \frametitle{Introducción}
 Fórmula de cuadratura de \textcolor{blue}{Gauss-Lobatto} para \textcolor{blue}{n} nodos:
@@ -94,15 +80,18 @@ Fórmula de cuadratura de \textcolor{blue}{Gauss-Lobatto} para \textcolor{blue}{
 \int_{-1}^{1} \! f(t)  \,dt = w_1 f(-1) + w_n f(1) + \sum_{i=1}^{n-1}w_i f(t_i),
 \]
 \\~\\
-
 donde $t_i$, $i=2, 3,...,n-1$, son las raíces del polinomio $p'_{n-1}(t)$, siendo $p_{n-1}(t)$ el polinomio de Legendre de grado $n-1$. Los \textcolor{blue}{pesos} son $w_1 = w_n = \tfrac{2}{n(n-1)}$ y
 \[
 w_i=\frac{2}{n(n-1)(p_{n-1}(t_i))^2},\qquad i=2,3,...,n-1.
 \].
 \end{frame}
 
+
+
+
 %------------------------------------------------
 \section{Construcción del programa de Gauss-Lobatto}
+%------------------------------------------------
 \begin{frame}
 \frametitle{Construcción del programa de Gauss-Lobatto}
 
@@ -110,7 +99,7 @@ w_i=\frac{2}{n(n-1)(p_{n-1}(t_i))^2},\qquad i=2,3,...,n-1.
     \centering
     \begin{tabular}{cc}
     \toprule
-   \textbf{ Parámetros de entrada} & \textbf{Parámetros de salida} \\
+   \textbf{Parámetros de entrada} & \textbf{Parámetros de salida} \\
    \midrule
     Número de nodos \textcolor{blue}{n} & Vector de nodos \textcolor{blue}{ti}\\
          & Vector de pesos \textcolor{blue}{wi}\\
@@ -127,8 +116,10 @@ w_i=\frac{2}{n(n-1)(p_{n-1}(t_i))^2},\qquad i=2,3,...,n-1.
 \end{enumerate}
 \end{frame}
 
+
 %------------------------------------------------
 \subsection{Posibles casos según los nodos pedidos}
+%------------------------------------------------
 \begin{frame}
 \frametitle{Posibles casos según los nodos pedidos}
 \begin{block}{$n<2$}
@@ -136,12 +127,12 @@ No es posible calcular  la cuadratura por:
 \begin{itemize}
     \item $n=1$:
     \begin{itemize}
-        \item No hay suficientes nodos para incluir los extremos de la cuadratura $−1$ y $1$.
-        \item Con un único nodo no captaría ninguna curvatura, luego no hay forma de aproximar con precisión.
+        \item No hay suficientes nodos para incluir los extremos de la cuadratura \textcolor{blue}{$-1$} y \textcolor{blue}{$1$}.
+        \item Con un único nodo no captaría \textcolor{blue}{ninguna curvatura}, luego no hay forma de aproximar con precisión.
     \end{itemize}
     \item $n<1$: 
     \begin{itemize}
-        \item No tiene sentido calcular una cuadratura sin nodos, o con nodos negativos.
+        \item No tiene sentido calcular una cuadratura \textcolor{blue}{sin} nodos, o con nodos \textcolor{blue}{negativos}.
     \end{itemize}
 \end{itemize}
 Se mostrará el mensaje \textit{"Se necesitan al menos 2 nodos para la cuadratura"}.
@@ -166,40 +157,38 @@ $wi=[w_1 \quad w_i \quad w_n]= \left[\tfrac{2}{n(n-1)} \quad \frac{2}{n(n-1)(p_{
 \end{block}
 \end{frame}
 
+
 %------------------------------------------------
-\subsection{El vector de nodos intermedios $ti$}
+\subsection{El vector de nodos intermedios \textit{ti}}
 %------------------------------------------------
 \begin{frame}[fragile]
-\frametitle{El vector de nodos intermedios $ti$}
+\frametitle{El vector de nodos intermedios \textit{ti}}
 
-\textbf{Polinomio de Legendre de orden $n-1$}
+\textbf{\boldmath{Polinomio de Legendre de orden $n-1$}}
 \begin{itemize}
-    \item Código auxiliar $LegendreT.m$, que devuelve los coeficientes truncados.
-    \item Lo guardamos en el vector $cl$. \\
-    \begin{exampleblock}{Código}
+    \item Código auxiliar \textcolor{blue}{\textit{LegendreT.m}}, que devuelve los coeficientes truncados.
+    \item Lo guardamos en el vector \textcolor{blue}{\textit{cl}}.
+\end{itemize} \\
+
+\begin{exampleblock}{Código}
     \begin{verbatim}
+
     cl=LegendreT(n-1)
     \end{verbatim}
     \end{exampleblock}
-     
-   
-    
-\end{itemize}
-
-
-
 \end{frame}
+
+%------------------------------------------------
+
 \begin{frame}[fragile]
-\frametitle{El vector de nodos intermedios $ti$}
+\frametitle{El vector de nodos intermedios \textit{ti}}
+\textbf{\boldmath{Derivada del polinomio de Legendre de orden $n-1$.}}
 
-
-
-\textbf{Derivada del polinomio de Legendre de orden $n-1$.}
-\\ Aplicamos la regla de derivación de polinomios:
+Aplicamos la regla de derivación de polinomios:
 \[
 \frac{d}{dx}(a_k x^k)=k a_k x^{k-1}
 \]
-Los coeficientes de la derivada los guardaremos en el vector \textit{ci}.
+Los coeficientes de la derivada los guardaremos en el vector \textcolor{blue}{\textit{ci}}.
 La derivada del polinomio de grado $n-1$ tiene grado $n-2$, eliminamos el último término correspondiente al grado 0, cuya derivada es 0. \\ 
 \begin{exampleblock}{Código}
 \begin{verbatim}
@@ -207,16 +196,16 @@ ci=((n-1):-1:0).*cl;
 ci=ci(:,(1:n-1));
 \end{verbatim}
 \end{exampleblock}
-
-
 \end{frame}
+
+%------------------------------------------------
+
 \begin{frame}[fragile]
 \frametitle{El vector de nodos intermedios $ti$}
+\textbf{\boldmath{Raíces de la derivada del polinomio de Legendre de orden $n-1$.}}
 
-\textbf{Raíces de la derivada del polinomio de Legendre de orden $n-1$.}
-Utilizando el comando \textit{root}, pero como nos da un vector columna (al que llamamos $ti$) lo tenemos que trasponer. Queremos trabajar con vectores fila y ordenamos de forma descendente.
+Las obtenemos usando el comando \textcolor{blue}{\textit{root}}, pero como nos da un vector columna (al que llamamos \textcolor{blue}{\textit{ti}}) lo tenemos que trasponer. Queremos trabajar con vectores fila y ordenamos de forma descendente.
 
-\textit{\\Código:}
 \begin{exampleblock}{Código}
 \begin{verbatim}
 ti=roots(ci);
@@ -226,26 +215,31 @@ ti=sort(ti,"descend");
 \end{exampleblock}
 \end{frame}
 
+
 %------------------------------------------------
-\subsection{El vector de pesos $wi$}
+\subsection{El vector de pesos \textit{wi}}
 %------------------------------------------------
 \begin{frame}
-\frametitle{El vector de pesos $wi$}
-Asignamos a la variable \textit{wn} el valor de los pesos de los extremos $wn=w_1=w_n$, e inicializamos el vector \textit{wi} vacío.
+\frametitle{El vector de pesos \textit{wi}}
+Asignamos a la variable \textcolor{blue}{\textit{wn}} el valor de los pesos de los extremos $wn=w_1=w_n$, e inicializamos el vector \textcolor{blue}{\textit{wi}} vacío.
 
 Con un bucle \textcolor{blue}{for} calculamos los pesos intermedios 
 \[
 w_i=w_n\frac{1}{(p_{n-1}(t_i))^2},\qquad i=2,3,...,n-1.
 \]
-que vamos añadiendo al vector \textit{wi}.
+que vamos añadiendo al vector \textcolor{blue}{\textit{wi}}.
 
-Agregamos los pesos de los extremos \textit{wn} al vector \textit{wi}, obteniendo el vector de pesos \textit{wi}.
+Agregamos los pesos de los extremos \textcolor{blue}{\textit{wn}} al vector \textcolor{blue}{\textit{wi}}, obteniendo el vector de pesos \textcolor{blue}{\textit{wi}}.
 \end{frame}
 
+%------------------------------------------------
+
 \begin{frame}[fragile]
-\frametitle{El vector de pesos $wi$}
+\frametitle{El vector de pesos \textit{wi}}
 \begin{exampleblock}{Código}
 \begin{verbatim}
+wi=[];
+wn=2/(n*(n-1));
 for i=1:(n-2)
     pi=polyval(cl,ti(i));
     w=wn/(pi^2);
@@ -256,12 +250,13 @@ wi=[wn wi wn];
 \end{exampleblock}
 \end{frame}
 
+
 %------------------------------------------------
 \subsection{El vector de nodos completo \textit{ti}}
 %------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{El vector de nodos completo \textit{ti}}
-Solo falta añadir los nodos de los extremos $-1$ y 1 al vector \textit{ti}. Con esto, ya tenemos el vector de nodos \textit{ti} completo.
+Solo falta añadir los nodos de los extremos \textcolor{blue}{$-1$} y \textcolor{blue}{$1$} al vector \textcolor{blue}{\textit{ti}}. Con esto, ya tenemos el vector de nodos \textcolor{blue}{\textit{ti}} completo.
 
 \begin{exampleblock}{Código}
 \begin{verbatim}
@@ -269,6 +264,7 @@ ti=[1 ti -1];
 \end{verbatim}
 \end{exampleblock}
 \end{frame}
+
 
 %------------------------------------------------
 \subsection{Programa final}
@@ -278,9 +274,7 @@ ti=[1 ti -1];
 \begin{exampleblock}{Gauss-Lobatto}
 \begin{verbatim}
 function [ti,wi] = GaussLobatto(n)
-%[ti,wi] = GaussLobatto(n)
-wi=[];
-wn=2/(n*(n-1));
+wi=[];  wn=2/(n*(n-1));
 if n>2
     cl=LegendreT(n-1);
     ci=((n-1):-1:0).*cl;
@@ -290,19 +284,20 @@ if n>2
     ti=sort(ti,"descend");
     for i=1:(n-2)
         pi=polyval(cl,ti(i));
+        w=wn/(pi^2);
 \end{verbatim}
 \end{exampleblock}
 \end{frame}
+
+%------------------------------------------------
 
 \begin{frame}[fragile]
 \frametitle{Programa final}
 \begin{exampleblock}{}
 \begin{verbatim}
-        w=wn/(pi^2);
         wi=[wi w];
     end
-    wi=[wn wi wn];
-    ti=[1 ti -1];
+    wi=[wn wi wn];  ti=[1 ti -1];
 else 
     if n==2
         wi=[wn wn];
@@ -316,18 +311,22 @@ end
 \end{verbatim}
 \end{exampleblock}
 \end{frame}
+
+
+
+
 %------------------------------------------------
 \section{Gauss-Lobatto para 8 y 9 nodos}
 %------------------------------------------------
-
 \begin{frame}
 \frametitle{Gauss-Lobatto para 8 y 9 nodos}
-Para justificar los resultados obtenidos por el programa \texttt{GaussLobatto} nos basaremos en un par de propiedades de los pesos y los nodos que demostraremos a continuación:
+Para justificar los resultados obtenidos por el programa \textcolor{blue}{\textit{GaussLobatto.m}} nos basaremos en un par de propiedades de los pesos y los nodos que demostraremos a continuación:
 \begin{itemize}
-    \item Simetría de nodos respecto al 0
-    \item La suma de todos los pesos es igual a 2 y son simétricos
+    \item \textcolor{blue}{Simetría} de nodos respecto al 0.
+    \item La \textcolor{blue}{suma} de todos los pesos es igual a \textcolor{blue}{$2$} y son \textcolor{blue}{simétricos}.
 \end{itemize}
 \end{frame}
+
 
 %------------------------------------------------
 \subsection{Simetría de nodos y pesos}
@@ -338,18 +337,27 @@ Queremos probar que el polinomio de Legendre $l_i$ es función par si $i=2k$ e i
 \[l_0=1\quad;\quad l_1=x\quad;\quad l_2=x^2-\frac{1}{3}\quad;\quad l_3=x^3-\frac{3}{5}x \]
 Supongamos que $l_i$ es par y $l_{i+1}$ impar y probemos para $l_{i+2}$ y $l_{i+3}$ :
 \end{frame}
+
+%------------------------------------------------
+
 \begin{frame}
+\frametitle{Paridad e imparidad de polinomios de Legendre}
 a) Caso par:
 \[l_{i+2}(x)=(x-b_{i+2})\cdot l_{i+1}(x)-c_{i+2}\cdot l_i(x)\quad, \quad\alpha_{i+1}=\int_{-1}^1l_{i+1}^2(x)dx>0\]
 Por lo tanto \[b_{i+2}=\frac{1}{\alpha_{i+1}} \int_{-1}^1\underbrace{x\cdot l_{i+1}^2(x)}_{impar}dx=0\]
 \[\Rightarrow l_{i+2}=\underbrace{x\cdot l_{i+1}(x)}_{par}-\underbrace{c_{i+2}\cdot l_i(x)}_{par}\Rightarrow l_{i+2}(x)\text{ es par.} \]
 \end{frame}
+
+%------------------------------------------------
+
 \begin{frame}
+\frametitle{Paridad e imparidad de polinomios de Legendre}
 b) Caso impar:
 \[l_{i+3}(x)=(x-b_{i+3})\cdot l_{i+2}(x)-c_{i+3}\cdot l_{i+1}(x)\quad,\quad\alpha_{i+2}=\int_{-1}^1l_{i+2}^2(x)dx>0\] 
 Por lo tanto \[b_{i+3}=\frac{1}{\alpha_{i+2}}\int_{-1}^1\underbrace{x\cdot l_{i+2}^2(x)}_{impar}dx=0\]
 \[\Rightarrow b_{i+3}=\underbrace{x\cdot l_{i+2}(x)}_{impar}-\underbrace{c_{i+3}\cdot l_{i+1}(x)}_{impar}\Rightarrow l_{i+3}(x)\text{ es impar.}\]
 \end{frame}
+
 %------------------------------------------------
 
 \begin{frame} 
@@ -368,6 +376,8 @@ Supongamos que existe una raíz $x_i:f(x_i)=0$. Al ser $f(x)$ impar, se cumple q
 \frametitle{Simetría nodos y pesos}
 Utilizando el primer resultado, vemos que las derivadas de los polinomios de Legendre truncados también deben ser o pares o impares, dado que al derivar el polinomio se invierte la paridad. Por el segundo resultado, el conjunto de raíces de $\tilde l_i(x)'$ (que corresponden con los nodos de Gauss-Lobatto) debe ser simétrico entorno al 0. Dado que los pesos se calculan a partir de $(p_{n-1}(t_i))^2$, y teniendo en cuenta que $p_{n-1}^2(x)$ debe ser par y que los nodos son simétricos, entonces los pesos también lo deben ser. 
 \end{frame}
+
+
 %------------------------------------------------
 \subsection{Suma de pesos}
 %------------------------------------------------
@@ -384,6 +394,9 @@ Para demostrar que la suma de los pesos es siempre 2, consideramos el sistema ma
 \end{cases}
 \]
 \end{frame}
+
+%------------------------------------------------ 
+
 \begin{frame}
 \noindent En forma matricial, el sistema se escribe como:
 \[
@@ -413,8 +426,11 @@ w_n
 
 \noindent La primera ecuación del sistema [ $\sum_{i=1}^n w_i = 2$ ], es una condición necesaria para garantizar la exactitud en funciones constantes. Los pesos \( w_1, \ldots, w_n \) se calculan resolviendo este sistema, asegurando que la suma siempre sea 2 independientemente de \( n \).
 \end{frame}
+
+
 %------------------------------------------------ 
 \subsection{Gauss-Lobatto 8 y 9 nodos}
+%------------------------------------------------ 
 \begin{frame}
 \frametitle{Gauss-Lobatto 8 y 9 nodos}
 \begin{block}{8 nodos}
@@ -439,11 +455,43 @@ ans =
 \end{verbatim}
 \end{block}
 \end{frame}
+
+\begin{frame}
+\frametitle{Gauss-Lobatto 8 y 9 nodos}
+\begin{block}{9 nodos}
+\begin{verbatim}
+
+>> [t9,w9] = GaussLobatto(9)
+
+t9 =
+
+    1.0000    0.8998    0.6772    0.3631         0   -0.3631   -0.6772   -0.8998   -1.0000
+
+
+w9 =
+
+    0.0278    0.1655    0.2745    0.3464    0.3715    0.3464    0.2745    0.1655    0.0278
+
+>> sum(w9)
+
+ans =
+
+    2.0000
+\end{verbatim}
+\end{block}
+\end{frame}
+
+
+
+
 %------------------------------------------------
-\section{Integracion mediante Gauss-Lobatto}
+\section{Integración mediante Gauss-Lobatto}
+%------------------------------------------------
+
 %------------------------------------------------
 \subsection{Gauss-Lobatto con extremos -1 y 1}
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+%------------------------------------------------
+\begin{frame}[fragile] 
 \frametitle{Gauss-Lobatto con extremos -1 y 1}
 \begin{exampleblock}{Gauss-Lobatto con extremos -1 y 1}
 \begin{verbatim}
@@ -461,12 +509,10 @@ end
 \end{exampleblock}
 \end{frame}
 
-%------------------------------------------------
 
 %------------------------------------------------
-
-
 \subsection{Gauss-Lobatto con extremos a y b}
+%------------------------------------------------
 \begin{frame}
 \frametitle{Gauss-Lobatto con extremos a y b}
 El procedimiento es igual al apartado anterior, solo hay que realizar el \textcolor{blue}{cambio de variable}:
@@ -478,12 +524,12 @@ por lo que podemos aproximar
 
 %------------------------------------------------
 
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
+\begin{frame}[fragile]
 \frametitle{Gauss-Lobatto con extremos a y b}
 \begin{exampleblock}{Gauss-Lobatto con extremos a y b}
 \begin{verbatim}
 function I = integraGaussLobattoAB(a,b,f,n)
-%I = integraGaussLobattoAB(f,n)
+%I = integraGaussLobattoAB(a,b,f,n)
 [ti,wi]=GaussLobatto(n);
 ba=ones(1,n)*(b+a)/2;
 ti=(ti*(b-a)/2)+ba;
@@ -497,33 +543,29 @@ end\end{verbatim}
 \end{exampleblock}
 \end{frame}
 
-%------------------------------------------------
-%------------------------------------------------
 
-
+%------------------------------------------------
 \subsection{Gauss-Lobatto para integrales impropias}
+%------------------------------------------------
 \begin{frame}
 \frametitle{Gauss-Lobatto para integrales impropias}
-Consideremos la sucesion decreciente convergente a cero $\{s_n\}_{n=1}^n$: $a+s_1<b$ $\wedge$ \stackrel{*} $s_k > s_{k-1} \forall k$ \wedge $\lim_{n \rightarrow \infty} s_n = 0$
+Consideremos la sucesion decreciente convergente a cero $\{s_n\}_{n=1}^n$: $a+s_1<b$ $\wedge$ \stackrel{*} $s_k < s_{k-1} \space \forall k\in \mathbb{N}$ \wedge $\space\lim_{n \rightarrow \infty} s_n = 0$
 y la siguiente suma finita de integrales propias para probar que este metodo para sumas infinitas en efecto converge al valor de
 la integral impropia original
 $$
-\int_{a + s_n}^b f(x) \, dx + \int_{a + s_{n-1}}^{a + s_n} f(x) \, dx + \cdots + \int_{a + s_1}^{a + s_2} f(x) \, dx \stackrel{*}= \int_a^b f(x) \, dx \quad $$
+\int_{a + s_1}^b f(x) \, dx + \int_{a + s_{2}}^{a + s_1} f(x) \, dx + \cdots + \int_{a + s_n}^{a + s_{n-1}} f(x) \, dx \stackrel{*}= \int_{a+s_n}^b f(x) \, dx \quad $$
 $$\Rightarrow \int_{a + s_1}^b f(x) \, dx + \int_{a + s_2}^{a + s_1} f(x) \, dx + \cdots = \lim_{n \rightarrow \infty} \int_{a + s_n}^b f(x) \, dx $$$$ =\int_{a + 0}^b f(x) \, dx = \int_a^b f(x) \, dx$$
 \\~\\
 \end{frame}
 
 %------------------------------------------------
-%------------------------------------------------
 
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-%Br Brr Patapim
+\begin{frame}[fragile] %Br Brr Patapim
 
 \frametitle{Gauss-Lobatto para integrales impropias}
 \begin{exampleblock}{Gauss-Lobatto para integrales impropias}
 \begin{verbatim}
 function I = integraGaussLobattoImpropio(a,b,f,n,k)
-%I = IntegraGaussLobattoImpropio(a,b,f,n,k)
 I=0; j=1; a_end=a+1/(2^j);
 while a_end>b
     j=j+1;
@@ -534,18 +576,21 @@ for i=j:j+k-1
     I=I+integraGaussLobattoAB(a+ai/2,a+ai,f,n);
 end
 I=I+integraGaussLobattoAB(a_end,b,f,n);
-end\end{verbatim}
+end
+\end{verbatim}
 \end{exampleblock}
 \end{frame}
+
+
+
 
 %------------------------------------------------
 \section{Aproximación mediante Gauss-Lobatto con 9 nodos}
 %------------------------------------------------
-
 \begin{frame}
 \frametitle{Aproximación mediante Gauss-Lobatto con 9 nodos}
 
-Para comprobar el resultado de las siguientes integrales usaremos el comando \texttt{quadgk}.
+Para comprobar el resultado de las siguientes integrales usaremos el comando \textcolor{blue}{\texttt{quadgk}}.
 
 \[
 \displaystyle I_1 = \int_{0}^{\pi/3} \! \frac{1}{1 - \sin(x)} \, dx
@@ -559,7 +604,7 @@ Para comprobar el resultado de las siguientes integrales usaremos el comando \te
         \rowcolor{gray!30}
          & Gauss Lobatto 9 nodos & quadgk \\
         \hline
-         errores & 2.732050857019763 & 2.732050807568876 \\
+         $I_1$ & 2.732050857019763 & 2.732050807568876 \\
         \hline
     \end{tabular}
 \end{table}
@@ -580,8 +625,6 @@ Para comprobar el resultado de las siguientes integrales usaremos el comando \te
 \end{table}
 \end{frame}
 
-
-%------------------------------------------------
 %------------------------------------------------
 
 \begin{frame} 
@@ -603,7 +646,7 @@ Para \( I_2 \), se utilizó la función \texttt{integraGaussLobattoImpropio} deb
         \rowcolor{gray!30}
          & Gauss Lobatto 9 nodos & quadgk \\
         \hline
-         errores & 2.651469905786794 & 2.651469253040811 \\
+         $I_2$ & 2.651469905786794 & 2.651469253040811 \\
         \hline
     \end{tabular}
 \end{table}
@@ -624,8 +667,6 @@ Para \( I_2 \), se utilizó la función \texttt{integraGaussLobattoImpropio} deb
 \end{table}
 \end{frame}
 
-
-%------------------------------------------------
 %------------------------------------------------
 
 \begin{frame}
@@ -649,6 +690,7 @@ La función crece de forma extremadamente rápida cerca de \( x = 0 \), por lo q
 
 Este resultado confirma que \( I_3 \) es una \textbf{integral impropia divergente} que no tiene un valor finito.
 \end{frame}
+
 
 
 
@@ -677,8 +719,9 @@ Este resultado confirma que \( I_3 \) es una \textbf{integral impropia divergent
     
     \label{tab:my_label}
 \end{table}
-
 \end{frame}
+
+%------------------------------------------------
 
 \begin{frame}
 \frametitle{Comparación con Gauss-Legendre}
@@ -694,6 +737,8 @@ Este resultado confirma que \( I_3 \) es una \textbf{integral impropia divergent
         \hline
          Gauss-Lobatto &  3.564891079137420 & 0.976667467013740\\
         \hline
+         G-Lobatto Impropio & 2.651469905786794 & 6.527459821548121e-07\\
+        \hline
         Gauss-Legendre &  2.480811316956006 & 0.107412295167674\\
         \hline
         quadgk & 2.588223612123681 &\\
@@ -702,8 +747,9 @@ Este resultado confirma que \( I_3 \) es una \textbf{integral impropia divergent
     
     \label{tab:my_label}
 \end{table}
-
 \end{frame}
+
+%------------------------------------------------
 
 \begin{frame}
 \frametitle{Comparación con Gauss-Legendre}
@@ -717,27 +763,36 @@ Este resultado confirma que \( I_3 \) es una \textbf{integral impropia divergent
         \rowcolor{gray!30} % color de la primera fila
          & I_3 & errores\\
         \hline
-         Gauss-Lobatto &  1.391952022433983e+4 & 1.291301606846351e+4\\
+         Gauss-Lobatto &  1.391952022434e+4 & 1.291301606846e+4\\
         \hline
-        Gauss-Legendre &  1.676112081728000e+2 & 8.388929477035150e+2\\
+         G-Lobatto Impropio & Inf & -\\
         \hline
-        quadgk & 1.006504155876315e+3 &\\
+        Gauss-Legendre &  1.676112081728e+2 & 8.388929477035e+2\\
+        \hline
+        quadgk & 1.006504155876e+3 &\\
         \hline
     \end{tabular}
-    
+
     \label{tab:my_label}
 \end{table}
-
 \end{frame}
+
+
+
+
 %------------------------------------------------
-%% Bibliografía
+\section{Bibliografía}
+%------------------------------------------------
 \begin{frame}
-\frametitle{Referencias}
+\frametitle{Bibliografía}
 \footnotesize{
   \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
-    \bibitem[Smith, 2012]{p1} John Smith (2012)
-      \newblock Title of the publication
-      \newblock \emph{Journal Name} 12(3), 45 -- 678.
+    \bibitem{p1} Burden, Richard L.
+      \newblock Análisis numérico
+    \bibitem{p2} Gerald, Curtis F.
+      \newblock Análisis Numérico con Aplicaciones
+    \bibitem{p2} Torregrosa Sánchez, Juan Ramón $\vert$ Hueso Pagoaga, José Luis $\vert$ Cordero Barbero, Alicia $\vert$ Martínez Molada, Eulalia
+      \newblock Problemas Resueltos de Métodos Numéricos
   \end{thebibliography}
 }
 \end{frame}
@@ -748,6 +803,5 @@ Este resultado confirma que \( I_3 \) es una \textbf{integral impropia divergent
 \Huge{\centerline{Fin.}}
 \end{frame}
 
-%----------------------------------------------------------------------------------------
-
+%----------------------------------------------------------------------
 \end{document} 
