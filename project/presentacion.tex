@@ -1,6 +1,6 @@
 \documentclass{beamer}
 
-
+\usepackage{tikz}
 %% Configuración de la presentación
 \mode<presentation> {
   %%% Selección de estilo
@@ -580,6 +580,42 @@ end
 \end{verbatim}
 \end{exampleblock}
 \end{frame}
+\begin{frame}
+\frametitle{Visualización de los intervalos de integración}
+
+\begin{center}
+
+\begin{tikzpicture}[scale=1.5]
+
+% Intervalo 1
+\draw[thick] (0,0) -- (2,0);
+\draw (0,0.1) -- (0,-0.1) node[below=3pt] {$a$};
+\draw (1,0.1) -- (1,-0.1) node[below=3pt] {$a_{end}$};
+\draw (2,0.1) -- (2,-0.1) node[below=3pt] {$b$};
+
+% Intervalo 2
+\begin{scope}[yshift=-1.2cm]
+  \draw[thick] (0,0) -- (2,0);
+  \draw (0,0.1) -- (0,-0.1) node[below=3pt] {$a$};
+  \draw (1,0.1) -- (1,-0.1) node[below=3pt] {$b_{start}$};
+  \draw (2,0.1) -- (2,-0.1) node[below=3pt] {$b$};
+\end{scope}
+
+% Intervalo 3
+\begin{scope}[yshift=-2.4cm]
+  \draw[thick] (0,0) -- (2,0);
+  \draw (0,0.1) -- (0,-0.1) node[below=3pt] {$a$};
+  \draw (1,0.1) -- (1,-0.1) node[below=3pt] {$c$};
+  \draw (2,0.1) -- (2,-0.1) node[below=3pt] {$b$};
+\end{scope}
+
+\end{tikzpicture}
+\end{center}
+
+\end{frame}
+
+
+
 
 
 
