@@ -1,4 +1,4 @@
-function [Integral,iter, incre] = TrapeciosIterativo(f,a,b,n,tol,maxiter)
+function [Integral,iter, incre,N] = TrapeciosIterativo(f,a,b,n,tol,maxiter)
 
 incre=tol+1;
 iter=1;
@@ -14,6 +14,7 @@ if incre>tol
     disp('mas iteraciones')
 else
     Integral=I(end);
+    N=n; % Nodos finales que se han utilizado por la tol
 end
 
 end
