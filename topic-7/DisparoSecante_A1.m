@@ -22,6 +22,9 @@ while incre>tol && iter<maxiter
     incre=abs(ybt-ypbt-beta);
     t1=t2; t2=t; % actualizamos los valores de t1 y t2
     yb1=ybt; ypb1=ypbt; % actualizamos los valores de yb1 y ypb1
+    [x,z]=ode45(PVI,x,[alfa,t2]);
+    zb2=z(end,1);
+    zpb2=z(end,2);
 end
 if incre>tol
     disp('Cambiar los t iniciales');
