@@ -12,5 +12,9 @@ while incr>tol && iter<maxiter
     incr=abs(y(end,1)-beta);
     iter=iter+1;
 end
+if incr>tol
+    disp('No ah convergido');
+else
+    
 
 end
