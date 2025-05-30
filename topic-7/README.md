@@ -18,7 +18,8 @@ This module implements several numerical methods for solving second-order bounda
 
 - **`DispLin_A2.m`**  
   Linear shooting method based on the principle of superposition, combining two fundamental solutions.
-
+- **`pvi1.m`, `pvi2.m`, `pvi4.m`**  
+  Auxiliary functions that define systems of ODEs depending on the problem scenario.
 
 
 
