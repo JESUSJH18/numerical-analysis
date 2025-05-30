@@ -113,4 +113,4 @@ ERROR =
     0.0000
 ```
 
-
+The output shows that the error values are multiplied by $10^{-4}$, meaning the actual errors are of order $10^{-5}$   or less, indicating a very accurate numerical solution for all evaluated points.
