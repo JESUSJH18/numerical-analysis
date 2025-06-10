@@ -1,25 +1,28 @@
-function [x,y,t,iter,incre]= DisparoSecante_A1(PVI,a,b, alfa,beta,N, tol,maxiter)
+function [x,y,t,iter,incre]= DisparoSecante_A1_p2(PVI,a,b, alfa,beta,N, tol,maxiter)
+% problema 1 del examen 2022-> RK4_sis
+% [x,y,t,iter,incre]= DisparoSecante_A1_p2('p2examen',1,2, 0.909297,1.583624,10, 1e-6,20)
   %N es el numero de subintervalos
 h=(b-a)/N; 
 x=a:h:b; 
 incre=tol+1; iter=0;
 t0=0; % este t0 se puede cambiar, es un valor cualquiera
-[x,y]=ode45(PVI,x,[alfa,t0]); 
-yb0=y(end,1);
+[x,y]=RK4_sis(PVI,a,b,[t0,alfa],N); 
+yb0=y(end,1); dyb0=y(end,2);
 % ypb1=y(end,2);
 t1=1;% este t1 se puede cambiar
-[x,y]=ode45(PVI,x,[alfa,t1]);
-yb1=y(end,1);
+[x,y]=RK4_sis(PVI,a,b,[t1,alfa],N);
+yb1=y(end,1); dyb1=y(end,2);
 % zpb2=z(end,2);
 
 while incre>tol && iter<maxiter
-    t=t1-((yb1-beta)*(t1-t0))/(yb1-yb0);
-    [x,y]=ode45(PVI,x,[alfa,t]);
-    yb=y(end,1);
+    t=t1-((yb1-dyb1-beta)*(t1-t0))/(yb1-dyb1-yb0+dyb0);
+    [x,y]=RK4_sis(PVI,a,b,[t,alfa],N);
+    yb=y(end,1); dyb=y(end,2);
     t0=t1; t1=t; % actualizamos los valores de t1 y t2
     yb0=yb1; yb1=yb;
+    dyb0=dyb1; dyb1=dyb;
     iter=iter+1;
-    incre=abs(yb1-beta);
+    incre=abs(yb1-dyb1-beta);
     
 end
 if incre>tol

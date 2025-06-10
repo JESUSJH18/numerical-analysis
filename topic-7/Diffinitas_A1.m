@@ -1,6 +1,6 @@
 function [X,solve]= Diffinitas_A1(p,q,r,a,b,alfa,beta,N)
     
-h=(b-a)/(N+1); %N+2 puntos, N+1 numero de subintervalos
+h=(b-a)/(N+1); %N+2 puntos, N+1 numero de subintervalos, N incognitas
 X=a:h:b; 
 x=X(2:end-1); X=X(:);
 px=feval(p,x);
