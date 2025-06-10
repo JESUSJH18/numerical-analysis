@@ -1,4 +1,5 @@
 function [x,y,t,iter,incre]= DisparoSecante_A1(PVI,a,b, alfa,beta,N, tol,maxiter)
+% condiciones dirichlet
   %N es el numero de subintervalos
 h=(b-a)/N; 
 x=a:h:b; 

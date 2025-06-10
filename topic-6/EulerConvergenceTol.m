@@ -1,4 +1,4 @@
-function convergence_order = EulerConvergence(f, a, b, y0, n_values)
+function [convergence_order,errors] = EulerConvergenceTol(f, a, b, y0, n_values,tol,maxiter)
     % f: Función de la EDO (string o function handle)
     % a, b: Intervalo [a, b]
     % y0: Condición inicial
@@ -8,21 +8,24 @@ function convergence_order = EulerConvergence(f, a, b, y0, n_values)
     %n_ref = 10000;
     %[~, y_ref] = EulerSistemas(f, a, b, y0, n_ref);
     %ref_value = y_ref(end);
-    fexact=@(x) (x^2)*(exp(x)+exp(1)); % cambiar en cada problema
+    fexact=@(x) (x^2)*(exp(x)+exp(1));
     ref_value=fexact(b);
     % 2. Inicializar arrays para resultados
     num_n = length(n_values);
     solutions = zeros(1, num_n);
-    errors = zeros(1, num_n);
+    errors = ones(1, num_n);
     h_values = zeros(1, num_n);
-    
+    iter=1;
     % 3. Calcular soluciones para cada n
-    for i = 1:num_n
-        n = n_values(i);
-        [~, y] = EulerSistemas(f, a, b, y0, n);
-        solutions(i) = y(end);
-        h_values(i) = (b - a)/n;
-        errors(i) = abs(solutions(i) - ref_value);
+    while tol<min(errors) && iter<maxiter
+        for i = 1:num_n
+            n = n_values(i);
+            [~, y] = EulerSistemas(f, a, b, y0, n);
+            solutions(i) = y(end);
+            h_values(i) = (b - a)/n;
+            errors(i) = abs(solutions(i) - ref_value);
+        end
+        n_values=n_values.*2;
     end
     
     % 4. Calcular ratios y órdenes
