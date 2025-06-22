@@ -1,54 +1,66 @@
-function [ai,bi,ci,di,p] = splineCubicoNatural(xi,fi)
-% splineCubicoNatural -Calcula el spline cúbico natural
-% Entrada:
-% xi -nodos (vector de longitud n+1)
-% fi -valores de la función en los nodos
-% Salida:
-% ai, bi, ci, di -coeficientes de cada tramo del spline
-% P función spline como expresión simbólica por tramos -
-%[ai,bi,ci,di,p] = splineCubicoNatural(xi,fi)
-n = length(xi) -1;
-m = n + 1;
-ai = fi(:);  % columna
-hi = diff(xi);  % longitudes entre nodos
+function [ai, bi, ci, di, p] = splineCubicoNatural(xi, fi)
+% SPLINECUBICONATURAL Calcula el spline cúbico natural
 
 
-% Inicializar vectores para sistema tridiagonal
-dP = zeros(m,1);
-% diagonal principal
-dS = zeros(m,1);
-% superdiagonal (con tamaño m)
-dI = zeros(m,1);
-% subdiagonal (con tamaño m)
-v = zeros(m,1);
-% lado derecho
-dP(1) = 1;
-dP(end) = 1;
-for i = 2: n
-    dI(i) = hi(i - 1) ;
-    dP(i)=2 * (hi(i - 1) + hi(i)) ;
-    dS(i) = hi(i);
-    term1 = 3 / hi(i) * (ai(i+1) - ai(i));
-    term2 = 3 / hi(i-1) * (ai(i) - ai(i-1));
-    v(i) = term1 - term2;
+
+if length(xi) ~= length(fi)
+    error('Los vectores xi y fi deben tener la misma longitud');
 end
-% Resolver sistema tridiagonal para obtener ci
-c = Crout(dP, dS, dI, v);
+if length(xi) < 3
+    error('Se necesitan al menos 3 puntos para un spline cúbico');
+end
 
-% Calcular bi y di
+n = length(xi) - 1;  % Número de intervalos
+ai = fi(:);          % Coeficientes a (valores de la función)
+hi = diff(xi);       % Diferencias entre nodos
+
+% 2. Sistema tridiagonal para c_i
+A = zeros(n+1);      % Matriz del sistema
+b = zeros(n+1, 1);   % Vector independiente
+
+% Condiciones naturales (S''=0 en extremos)
+A(1,1) = 1;
+A(end,end) = 1;
+
+% Ecuaciones internas
+for i = 2:n
+    A(i,i-1:i+1) = [hi(i-1), 2*(hi(i-1)+hi(i)), hi(i)];
+    b(i) = 3*((ai(i+1)-ai(i))/hi(i) - (ai(i)-ai(i-1))/hi(i-1));
+end
+
+
+ci = A\b;
+
 bi = zeros(n, 1);
-di= zeros(n, 1);
+di = zeros(n, 1);
 for i = 1:n
-    bi(i)= (ai(i + 1) - ai(i)) / hi(i) -hi(i)/3* (2 * c(i)+c(i+1)) ;
-    di(i)= (c(i + 1) - c(i)) /(3* hi(i)) ;
+    bi(i) = (ai(i+1)-ai(i))/hi(i) - hi(i)/3*(2*ci(i)+ci(i+1));
+    di(i) = (ci(i+1)-ci(i))/(3*hi(i));
 end
-ci = c(1: n) ; % para salida
-% Construcción del spline simbólico por tramos
-%despues poner en contruirPolinomios.m
+
+ci = ci(1:n);
+
 syms x;
 p = sym(0);
-for i = 1 : n
-    S=ai(i)+bi(i) * (x-xi(i))+ci(i) * (x - xi(i))^ 2 + di(i) * (x - xi(i))^ 3 ;
-    p = piecewise((x>=xi(i))& (x<=xi(i+1)), S, p);
+fprintf('\nSpline Cúbico Natural:\n');
+
+for i = 1:n
+    % Polinomio por tramos
+    S = ai(i) + bi(i)*(x-xi(i)) + ci(i)*(x-xi(i))^2 + di(i)*(x-xi(i))^3;
+    p = piecewise((x>=xi(i)) & (x<=xi(i+1)), S, p);
+    
+    % Mostrar con formato claro
+    fprintf('Tramo %d [%.4f, %.4f]:\n', i, xi(i), xi(i+1));
+    fprintf('S(x) = %.4f', ai(i));
+    if bi(i) ~= 0
+        fprintf(' %+.4f(x%+.4f)', bi(i), -xi(i));
+    end
+    if ci(i) ~= 0
+        fprintf(' %+.4f(x%+.4f)²', ci(i), -xi(i));
+    end
+    if di(i) ~= 0
+        fprintf(' %+.4f(x%+.4f)³', di(i), -xi(i));
+    end
+    fprintf('\n\n');
 end
 end
